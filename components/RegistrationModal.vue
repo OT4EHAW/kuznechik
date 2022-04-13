@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-row class="mt-5" align-h="center">
-      <b-col md="4">
+      <b-col md="5">
         <b-card
           no-body
           border-variant="primary"
@@ -13,10 +13,12 @@
         <b-card-body>
           <b-form @submit="onSubmit">
 
-            <b-alert v-model="isAlertShow" variant="danger" dismissible>
+            <b-alert v-if="errorMessage" v-model="isAlertShow" variant="danger" dismissible>
               {{ this.errorMessage }}
             </b-alert>
-
+            <b-alert v-if="successMessage" v-model="isAlertShow" variant="success" dismissible>
+              {{ this.successMessage }}
+            </b-alert>
             <b-form @submit="onSubmit">
               <b-form-row>
 
@@ -66,7 +68,7 @@
 
               <b-form-row class="mt-3">
                 <b-input-group>
-                  <b-form-input placeholder="Повторите пароль" v-model="userPass2" :state="passValidation2" id="feedback-pass" :type="isShowPassword2 ? 'text' : 'password'"></b-form-input>
+                  <b-form-input placeholder="Повторите пароль" v-model="userPass2" :state="passValidation2" id="feedback-pass-2" :type="isShowPassword2 ? 'text' : 'password'"></b-form-input>
                   <b-input-group-append is-text  role="button" @click="changeShowPassword2">
                   <span  v-if="isShowPassword2" >
                      <b-icon  size="sm" text="icon"  variant="icon"  icon="eye" ></b-icon>
@@ -108,7 +110,8 @@ export default {
       userPass: '',
       userPass2: '',
       passFeedback: '',
-      errorMessage: '',
+      errorMessage: null,
+      successMessage: null,
       isAlertShow: false,
       isShowPassword: false,
       isShowPassword2: false
@@ -160,22 +163,15 @@ export default {
     },
     async onSubmit(evt) {
       evt.preventDefault()
-      const loginReq = {status: "ok", response: {username: "test_user",access_token: "test_access_token"}}
-      if (loginReq.status === 'error') {
-        if (loginReq.response.message != null && loginReq.response.message != '') {
-          this.errorMessage = loginReq.response.message
-        }
-        else {
-          this.errorMessage = 'Login failed. Please try again.'
-        }
-        this.isAlertShow = true
-      }
-      else if (loginReq.status === 'ok') {
-        await this.$store.dispatch('setState', { username: loginReq.response.username,
-          logged_in: true,
-          access_token: loginReq.response.access_token })
-        this.$router.push('/')
-      }
+      this.$axios.post(`/api/account/new`, {email: this.userId, gost_hash_512: this.userPass})
+        .then(res => {
+          this.successMessage = "Новый аккаунт успешно создан"
+          this.isAlertShow = true
+          return { account: res.data }
+        }).catch(()=>{
+          this.errorMessage = "Не удалось создать аккаунт"
+          this.isAlertShow = true
+      })
     },
     handleClickLogin () {
       this.$router.push('/login')

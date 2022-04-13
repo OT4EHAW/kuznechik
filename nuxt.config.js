@@ -1,8 +1,9 @@
 export default {
+  ssr: true,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: 'Менеджер паролей',
-    title: 'kuznechik_front',
+    title: 'kuznechik',
     htmlAttrs: {
       lang: 'en'
     },
@@ -35,9 +36,13 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt',
-  ],
+    'bootstrap-vue/nuxt', '@nuxtjs/axios'
 
+  ],
+  mode: 'spa',
+  serverMiddleware: [
+    '~/api/index.js',
+  ],
   bootstrapVue: {
     icons: true
   },
