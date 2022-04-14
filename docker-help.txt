@@ -1,4 +1,26 @@
-docker build . -t docker/kuznechik
-docker run -p 3000:3000 docker/kuznechik
-
 docker container prune
+docker build . -t kuznechik
+docker-compose up
+
+
+хз что
+docker-compose build
+docker-compose up --build -d
+
+
+
+
+
+
+
+docker build . -t kuznechik
+docker run -p 3000:3000 kuznechik
+
+docker update --cpu-shares 512 -m 300M kuznechik
+docker restart kuznechik
+
+docker rm kuznechik
+
+
+// логирование работающей программы
+docker logs --follow kuznechik

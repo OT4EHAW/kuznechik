@@ -1,7 +1,6 @@
 FROM node:lts as builder
 
 WORKDIR /app
-
 COPY . .
 
 RUN npm install \
@@ -17,7 +16,7 @@ RUN rm -rf node_modules && \
   --prefer-offline \
   --pure-lockfile \
   --non-interactive \
-  --production=true
+  --production=false
 
 FROM node:lts
 
