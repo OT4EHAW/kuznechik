@@ -8,10 +8,9 @@
 </template>
 
 <script>
-import navbar from '~/components/navbar'
+
+import Navbar from "../components/Navbar";
 export default {
-  components: {
-    navbar,
-  }
+  components: {Navbar}
 }
 </script>

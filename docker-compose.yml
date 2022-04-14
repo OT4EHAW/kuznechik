@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:5.0.2
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+      - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+
+  nuxt:
+    # Используем ранее собранный образ
+    image:  docker/kuznechik
+    container_name: nuxt_app
+    # Также пробрасываем порт на котором висит приложение
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
