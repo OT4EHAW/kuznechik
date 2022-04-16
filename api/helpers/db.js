@@ -9,6 +9,7 @@ const DB_PORT='27017'
 
 
 const url = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`
+const url2 = `mongodb://master:master1234@mongo:27017/master-passwords?authSource=admin`
 
 const options = {
   useNewUrlParser: true,

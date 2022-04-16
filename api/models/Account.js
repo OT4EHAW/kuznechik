@@ -1,6 +1,11 @@
 const {Schema, model} = require('mongoose')
 
 const AccountSchema = new Schema({
+    _id: {
+      type: String,
+      required: true,
+      unique: true
+    },
     email: {
       type: String,
       required: true,
@@ -12,6 +17,7 @@ const AccountSchema = new Schema({
     },
   },
   {
+    _id: false,
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
   })
 

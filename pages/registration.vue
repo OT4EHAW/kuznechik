@@ -11,6 +11,5 @@ import RegistrationModal from "../components/RegistrationModal";
 export default {
   name:"registration",
   components: {RegistrationModal},
-  middleware: 'authenticated',
 }
 </script>

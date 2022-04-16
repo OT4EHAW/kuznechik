@@ -12,5 +12,6 @@ export default {
   name: "login",
   components: {LoginModal},
   middleware: 'authenticated',
+
 }
 </script>

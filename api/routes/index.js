@@ -25,6 +25,7 @@ router.get('/account/:id', (req, res) => {
 router.post('/account/new', (req, res) => {
   const {email, gost_hash_512} = req.body
   new Account({
+    _id: email,
     email,
     gost_hash_512
   }).save()

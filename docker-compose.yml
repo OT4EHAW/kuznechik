@@ -11,10 +11,9 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
       - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
 
-  kuznechik:
-    container_name: kuznechik
-    # Используем ранее собранный образ
-    image:  kuznechik
+  app:
+    container_name: app
+    build: .
     # Также пробрасываем порт на котором висит приложение
     ports:
       - $MANAGER_PORT:$MANAGER_PORT

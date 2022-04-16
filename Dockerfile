@@ -22,7 +22,11 @@ FROM node:lts
 
 WORKDIR /app
 
+ENV NODE_ENV=development
+
+
 COPY --from=builder /app  .
+
 
 ENV HOST 0.0.0.0
 EXPOSE 3000

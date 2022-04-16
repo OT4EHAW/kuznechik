@@ -1,6 +1,9 @@
-docker container prune
-docker build . -t kuznechik
+docker-compose down -v
+docker build . -t app
 docker-compose up
+
+
+docker container prune
 
 
 хз что

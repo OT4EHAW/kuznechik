@@ -19,7 +19,6 @@
             <b-alert v-if="successMessage" v-model="isAlertShow" variant="success" dismissible>
               {{ this.successMessage }}
             </b-alert>
-            <b-form @submit="onSubmit">
               <b-form-row>
 
                 <b-input-group>
@@ -28,14 +27,8 @@
                     <b-input-group-text>
                       <b-icon  icon="envelope" ></b-icon>
                     </b-input-group-text>
-
-
                   </b-input-group-append>
                 </b-input-group>
-
-
-
-
 
                 <b-form-invalid-feedback :state="userValidation">
                   Некорректный email
@@ -44,9 +37,7 @@
 
                 </b-form-valid-feedback>
               </b-form-row>
-            </b-form>
 
-            <b-form @submit="onSubmit">
               <b-form-row class="mt-3">
                 <b-input-group>
                   <b-form-input placeholder="Пароль" v-model="userPass" :state="passValidation" id="feedback-pass" :type="isShowPassword ? 'text' : 'password'"></b-form-input>
@@ -84,7 +75,6 @@
                 <b-form-valid-feedback :state="passValidation2">
                 </b-form-valid-feedback>
               </b-form-row>
-            </b-form>
 
             <b-form-row class="mt-4"  >
               <b-button block type="submit" variant="primary" :disabled="!loginValidation">Создать аккаунт</b-button>

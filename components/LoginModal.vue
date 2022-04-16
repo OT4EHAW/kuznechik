@@ -1,7 +1,7 @@
 <template>
   <b-container >
     <b-row class="mt-5" align-h="center">
-      <b-col md="4">
+      <b-col md="5">
         <b-card
           no-body
           border-variant="primary"
@@ -17,7 +17,7 @@
               {{ this.errorMessage }}
             </b-alert>
 
-            <b-form @submit="onSubmit">
+
               <b-form-row>
 
                 <b-input-group>
@@ -36,7 +36,7 @@
 
 
                 <b-form-invalid-feedback :state="userValidation">
-                  Ваш логин должен содержать не менее 8 символов
+                  Некорректный формат электронной почты
                 </b-form-invalid-feedback>
                 <b-form-valid-feedback :state="userValidation">
 
@@ -67,7 +67,6 @@
                 <b-form-valid-feedback :state="passValidation">
                 </b-form-valid-feedback>
               </b-form-row>
-            </b-form>
 
             <b-form-row class="mt-4"  >
               <b-button block type="submit" variant="primary" :disabled="!loginValidation">Войти</b-button>
@@ -76,7 +75,7 @@
         </b-card-body>
 
         <b-card-footer>
-         <b-button block to="/registration" variant="link" @click="handleClickRegistration"  >Создать новый аккаунт</b-button>
+         <b-button block  variant="link" @click="handleClickRegistration"  >Создать новый аккаунт</b-button>
         </b-card-footer>
         </b-card>
       </b-col>
@@ -139,22 +138,19 @@ export default {
     },
     async onSubmit(evt) {
       evt.preventDefault()
-      const loginReq = {status: "ok", response: {username: "test_user",access_token: "test_access_token"}}
-      if (loginReq.status === 'error') {
-        if (loginReq.response.message != null && loginReq.response.message != '') {
-          this.errorMessage = loginReq.response.message
-        }
-        else {
-          this.errorMessage = 'Login failed. Please try again.'
-        }
+      this.$axios.get(`/api/account`, {id: this.userId})
+        .then(res => {
+          this.successMessage = "Новый аккаунт успешно создан"
+          this.isAlertShow = true
+         /* await this.$store.dispatch('setState', { username: loginReq.response.username,
+            logged_in: true,
+            access_token: loginReq.response.access_token })*/
+          this.$router.push('/')
+          return { account: res.data }
+        }).catch(()=>{
+        this.errorMessage = "Не удалось создать аккаунт"
         this.isAlertShow = true
-      }
-      else if (loginReq.status === 'ok') {
-        await this.$store.dispatch('setState', { username: loginReq.response.username,
-          logged_in: true,
-          access_token: loginReq.response.access_token })
-        this.$router.push('/')
-      }
+      })
     },
     handleClickRegistration () {
       this.$router.push('/registration')

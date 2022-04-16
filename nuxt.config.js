@@ -39,8 +39,15 @@ export default {
     'bootstrap-vue/nuxt', '@nuxtjs/axios'
 
   ],
+  watchers: {
+    webpack: {
+      aggregateTimeout: 300,
+      poll: 1000
+    }
+  },
   serverMiddleware: [
-    '~/api/index.js',
+    // Will register file from project server-middleware directory to handle /server-middleware/* requires
+    { path: '/api', handler: '~/api/index.js' },
   ],
   bootstrapVue: {
     icons: true
