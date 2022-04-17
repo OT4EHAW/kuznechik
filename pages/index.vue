@@ -13,11 +13,17 @@
 <script>
 export default {
   computed: {
+
+    name () {
+      return localStorage.getItem('username')
+    },
     welcomeMessage () {
-      return `Welcome ${this.$store.state.username}!`
+      return this.name ? `Добро пожаловать ${this.name} :)` : "Добро пожаловать :)"
     }
   },
-
-  middleware: ['authenticated']
+  layout (context) {
+    console.log(context)
+    return localStorage.getItem('isAuth')==="true" ? 'user' : "default"
+  },
 }
 </script>

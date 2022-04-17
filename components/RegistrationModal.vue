@@ -155,12 +155,9 @@ export default {
         { email: this.userId, gost_hash_512: this.userPass }
       )
         .then(res => {
-          this.successMessage = 'Новый аккаунт успешно создан'
-          this.isAlertShow = true
+          this.$toast.success('Вы успешно создали новый аккаунт')
           return { account: res.data }
         }).catch(() => {
-          this.errorMessage = 'Не удалось создать аккаунт'
-          this.isAlertShow = true
         })
     },
     handleClickLogin () {

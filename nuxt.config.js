@@ -1,5 +1,5 @@
 export default {
-
+  ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: 'Менеджер паролей',
@@ -11,7 +11,6 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: 'lock.png' }
@@ -26,7 +25,6 @@ export default {
   plugins: [
     '~/plugins/axios'
   ],
-
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
@@ -39,19 +37,16 @@ export default {
   ],
   server: {
     port: 3000,
-    host: "127.0.0.1"
+    host: '127.0.0.1'
   },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt', '@nuxtjs/axios'
-
+    'bootstrap-vue/nuxt', '@nuxtjs/axios', '@nuxtjs/toast'
   ],
-  watchers: {
-    webpack: {
-      aggregateTimeout: 300,
-      poll: 1000
-    }
+  toast: {
+    position: 'bottom-center',
+    duration: 3000
   },
 
   bootstrapVue: {
@@ -62,5 +57,12 @@ export default {
     babel: {
       compact: true
     }
+  },
+
+
+  router: {
+    middleware: [
+      'auth'
+    ]
   }
 }

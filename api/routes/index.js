@@ -1,6 +1,7 @@
 import express from "express"
 
 import Account from "../models/Account"
+// import {Streebog} from "../utils/Streebog";
 
 const router = express.Router()
 
@@ -9,33 +10,49 @@ router.get('/account', (req, res) => {
   Account.find({}).then(data => {
     res.status(200).json(data)
   }).catch(err => {
-    res.status(404).json(err)
+    res.status(500).json(err)
   })
 })
+
 
 /* GET account by id */
 router.get('/account/:id', (req, res) => {
   Account.findById(req.params.id)
     .then(data => {
+     // let t= new Streebog(false)
+     // console.warn(t)
+      /* let t= new Streebog(false)
+       let result = t.getHash(password, false)
+       console.warn(result)*/
       res.status(200).json(data)
     }).catch(err => {
-      res.status(404).json(err)
+      res.status(500).json(err)
     })
 })
 
 /* POST create new account */
 router.post('/account/new', (req, res) => {
   const { email, gost_hash_512 } = req.body
-  new Account({
-    _id: email,
-    email,
-    gost_hash_512
-  }).save()
+  Account.findById(email)
     .then(data => {
-      res.status(201).json(data)
-    }).catch(err => {
-      res.status(404).json(err)
-    })
+      if (data !== null || data === {}) {
+        return res.status(406).json({})
+      }
+      new Account({
+        _id: email,
+        email,
+        gost_hash_512
+      }).save()
+        .then(data => {
+          res.status(201).json(data)
+        }).catch(err => {
+        res.status(500).json(err)
+      })
+    }).catch(()=>{
+    res.status(500).json(err)
+  })
+
+
 })
 
 /* PUT update account by id */
@@ -45,7 +62,7 @@ router.put('/account/update', (req, res) => {
     .then(data => {
       res.status(200).json(data)
     }).catch(err => {
-      res.status(404).json(err)
+      res.status(500).json(err)
     })
 })
 
@@ -56,7 +73,7 @@ router.delete('/account/delete', (req, res) => {
     .then(data => {
       res.status(200).json(data)
     }).catch(err => {
-      res.status(404).json(err)
+      res.status(500).json(err)
     })
 })
 

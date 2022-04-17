@@ -11,5 +11,6 @@ import RegistrationModal from "../components/RegistrationModal";
 export default {
   name:"registration",
   components: {RegistrationModal},
+
 }
 </script>

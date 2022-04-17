@@ -10,75 +10,57 @@
           header-bg-variant="primary"
           header-text-variant="white"
         >
-
           <!--  форма для входа        -->
-
           <b-card-body>
-            <!--    оповещение о статусе запроса        -->
-
-            <b-alert v-model="isAlertShow" variant="danger" dismissible>
-              {{ errorMessage }}
-            </b-alert>
-
-          <b-form @submit="onSubmit">
-
+            <b-form @submit="onSubmit">
             <!--   поле ввода логина (почты)        -->
-
-            <b-form-row>
-              <b-input-group>
-                  <b-form-input v-model="userId" placeholder="E-mail" :state="userValidation" id="feedback-user" ></b-form-input>
-                  <b-input-group-append>
-                    <b-input-group-text>
-                      <b-icon  icon="envelope" ></b-icon>
-                    </b-input-group-text>
-                  </b-input-group-append>
-              </b-input-group>
-              <b-form-invalid-feedback :state="userValidation">
-                Некорректный формат электронной почты
-              </b-form-invalid-feedback>
-              <b-form-valid-feedback :state="userValidation">
-              </b-form-valid-feedback>
-            </b-form-row>
-
-            <!--   поле ввода пароля        -->
-
-            <b-form-row class="mt-3">
+              <b-form-row>
                 <b-input-group>
-                  <b-form-input placeholder="Пароль" v-model="userPass" :state="passValidation" id="feedback-pass" :type="isShowPassword ? 'text' : 'password'">
-                  </b-form-input>
-                <b-input-group-append is-text  role="button" @click="changeShowPassword">
-                  <span  v-if="isShowPassword" >
-                     <b-icon  size="sm" text="icon"  variant="icon"  icon="eye" ></b-icon>
-                  </span>
-                  <span  v-else >
-                    <b-icon  size="sm" text="icon"  variant="icon" icon="eye-slash"></b-icon>
-                  </span>
-                </b-input-group-append>
+                    <b-form-input v-model="userId" placeholder="E-mail" :state="userValidation" id="feedback-user" ></b-form-input>
+                    <b-input-group-append>
+                      <b-input-group-text>
+                        <b-icon  icon="envelope" ></b-icon>
+                      </b-input-group-text>
+                    </b-input-group-append>
                 </b-input-group>
-                <b-form-invalid-feedback :state="passValidation">
-                  {{ passFeedback }}
+                <b-form-invalid-feedback :state="userValidation">
+                  Некорректный формат электронной почты
                 </b-form-invalid-feedback>
-                <b-form-valid-feedback :state="passValidation">
+                <b-form-valid-feedback :state="userValidation">
                 </b-form-valid-feedback>
-            </b-form-row>
-
+              </b-form-row>
+            <!--   поле ввода пароля        -->
+              <b-form-row class="mt-3">
+                  <b-input-group>
+                    <b-form-input placeholder="Пароль" v-model="userPass" :state="passValidation" id="feedback-pass" :type="isShowPassword ? 'text' : 'password'">
+                    </b-form-input>
+                  <b-input-group-append is-text  role="button" @click="changeShowPassword">
+                    <span  v-if="isShowPassword" >
+                       <b-icon  size="sm" text="icon"  variant="icon"  icon="eye" ></b-icon>
+                    </span>
+                    <span  v-else >
+                      <b-icon  size="sm" text="icon"  variant="icon" icon="eye-slash"></b-icon>
+                    </span>
+                  </b-input-group-append>
+                  </b-input-group>
+                  <b-form-invalid-feedback :state="passValidation">
+                    {{ passFeedback }}
+                  </b-form-invalid-feedback>
+                  <b-form-valid-feedback :state="passValidation">
+                  </b-form-valid-feedback>
+              </b-form-row>
             <!--   кнопка для входа        -->
-
-            <b-form-row class="mt-4"  >
-              <b-button block type="submit" variant="primary" :disabled="!loginValidation">
-                Войти
-              </b-button>
-
-            </b-form-row>
-          </b-form>
-        </b-card-body>
-
+              <b-form-row class="mt-4"  >
+                <b-button block type="submit" variant="primary" :disabled="!loginValidation">
+                  Войти
+                </b-button>
+              </b-form-row>
+            </b-form>
+           </b-card-body>
           <!--   ссылка для перехода на страницу регистрации        -->
-
           <b-card-footer>
          <b-button block  variant="link" @click="handleClickRegistration"  >Создать новый аккаунт</b-button>
         </b-card-footer>
-
         </b-card>
       </b-col>
     </b-row>
@@ -88,13 +70,13 @@
 <script>
 export default {
   name: 'LoginModal',
+  props: {
+  },
   data: function () {
     return {
       userId: '',
       userPass: '',
       passFeedback: '',
-      errorMessage: '',
-      isAlertShow: false,
       isShowPassword: false
     }
   },
@@ -137,21 +119,11 @@ export default {
     },
     async onSubmit (evt) {
       evt.preventDefault()
-      this.$axios.get(`/api/account/${this.userId}`)
-        .then(response => {
-          this.$store.dispatch('setState', {
-            username: response.data.email,
-            logged_in: true,
-            access_token: response.data.email
-          })
-          this.$router.push('/')
-        }).catch(() => {
-          this.errorMessage = 'Не удалось войти в аккаунт'
-          this.isAlertShow = true
-        })
+      const formData =  {email: this.userId, password: this.userPass }
+      this.$emit('submit', {...formData})
     },
     handleClickRegistration () {
-      this.$router.push('/registration')
+      this.$emit('link')
     }
   }
 }
