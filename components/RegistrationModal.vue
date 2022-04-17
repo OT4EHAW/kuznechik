@@ -8,19 +8,20 @@
           header="Новый аккаунт"
           bg-variant="light"
           header-bg-variant="primary"
-          header-text-variant="white">
+          header-text-variant="white"
+        >
 
         <b-card-body>
           <b-form @submit="onSubmit">
 
             <b-alert v-if="errorMessage" v-model="isAlertShow" variant="danger" dismissible>
-              {{ this.errorMessage }}
+              {{ errorMessage }}
             </b-alert>
             <b-alert v-if="successMessage" v-model="isAlertShow" variant="success" dismissible>
-              {{ this.successMessage }}
+              {{ successMessage }}
             </b-alert>
-              <b-form-row>
 
+            <b-form-row>
                 <b-input-group>
                   <b-form-input v-model="userId" placeholder="E-mail" :state="userValidation" id="feedback-user" ></b-form-input>
                   <b-input-group-append>
@@ -29,14 +30,12 @@
                     </b-input-group-text>
                   </b-input-group-append>
                 </b-input-group>
-
                 <b-form-invalid-feedback :state="userValidation">
                   Некорректный email
                 </b-form-invalid-feedback>
                 <b-form-valid-feedback :state="userValidation">
-
                 </b-form-valid-feedback>
-              </b-form-row>
+            </b-form-row>
 
               <b-form-row class="mt-3">
                 <b-input-group>
@@ -51,7 +50,7 @@
                 </b-input-group-append>
                 </b-input-group>
                 <b-form-invalid-feedback :state="passValidation">
-                  {{ this.passFeedback }}
+                  {{ passFeedback }}
                 </b-form-invalid-feedback>
                 <b-form-valid-feedback :state="passValidation">
                 </b-form-valid-feedback>
@@ -93,7 +92,7 @@
 
 <script>
 export default {
-  name: "RegistrationModal",
+  name: 'RegistrationModal',
   data: function () {
     return {
       userId: '',
@@ -109,64 +108,65 @@ export default {
   },
   computed: {
 
-    userValidation() {
+    userValidation () {
       if (this.userId.length === 0) {
         return null
       }
-      const re = /(.+)@(.+){2,}\.(.+){2,}/;
-      return re.test(this.userId.toLowerCase());
+      const re = /(.+)@(.+){2,}\.(.+){2,}/
+      return re.test(this.userId.toLowerCase())
     },
-    passValidation() {
+    passValidation () {
       return this.passFeedbackString()
     },
-    passValidation2() {
+    passValidation2 () {
       return this.passFeedbackString2()
     },
-    loginValidation() {
+    loginValidation () {
       return this.userValidation && this.passValidation && this.passValidation2
-    },
+    }
   },
-  methods : {
-    changeShowPassword() {
-      this.isShowPassword = !this.isShowPassword;
+  methods: {
+    changeShowPassword () {
+      this.isShowPassword = !this.isShowPassword
     },
-    changeShowPassword2() {
-      this.isShowPassword2 = !this.isShowPassword2;
+    changeShowPassword2 () {
+      this.isShowPassword2 = !this.isShowPassword2
     },
-    passFeedbackString() {
+    passFeedbackString () {
       if (this.userPass.length === 0) {
         return null
-      }
-      else if (this.userPass.length < 8 && /\d/.test(this.userPass)) {
+      } else if (this.userPass.length < 8 && /\d/.test(this.userPass)) {
         this.passFeedback = 'В пароле должно быть не менее 8-и символов.'
-      }
-      else if (!this.userPass.length < 8 && !/\d/.test(this.userPass)) {
+      } else if (!this.userPass.length < 8 && !/\d/.test(this.userPass)) {
         this.passFeedback = 'В пароле должна быть хотябы одна цифра.'
       }
       return this.userPass.length >= 8 && /\d/.test(this.userPass)
     },
-    passFeedbackString2() {
+    passFeedbackString2 () {
       if (this.userPass2.length === 0) {
         return null
       }
       return this.userPass === this.userPass2
     },
-    async onSubmit(evt) {
+    async onSubmit (evt) {
       evt.preventDefault()
-      this.$axios.post(`/api/account/new`, {email: this.userId, gost_hash_512: this.userPass})
+
+      this.$axios.post('/api/account/new',
+        { email: this.userId, gost_hash_512: this.userPass }
+      )
         .then(res => {
-          this.successMessage = "Новый аккаунт успешно создан"
+          this.successMessage = 'Новый аккаунт успешно создан'
           this.isAlertShow = true
           return { account: res.data }
-        }).catch(()=>{
-          this.errorMessage = "Не удалось создать аккаунт"
+        }).catch(() => {
+          this.errorMessage = 'Не удалось создать аккаунт'
           this.isAlertShow = true
-      })
+        })
     },
     handleClickLogin () {
       this.$router.push('/login')
     }
-  },
+  }
 }
 </script>
 

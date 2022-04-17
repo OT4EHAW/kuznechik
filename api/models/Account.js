@@ -1,24 +1,25 @@
-const {Schema, model} = require('mongoose')
+import mongoose from "mongoose"
 
-const AccountSchema = new Schema({
-    _id: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    gost_hash_512: {
-      type: String,
-      required: true
-    },
+const accountSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: true,
+    unique: true
   },
-  {
-    _id: false,
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
-  })
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  gost_hash_512: {
+    type: String,
+    required: true
+  }
+},
+{
+  _id: false,
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+})
 
-module.exports = model('account', AccountSchema)
+module.exports =
+  mongoose.models.Account || mongoose.model('Account', accountSchema);

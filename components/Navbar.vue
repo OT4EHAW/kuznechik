@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark" variant="primary">
-      <b-navbar-brand href="/">Home</b-navbar-brand>
+      <b-navbar-brand href="/">Менеджер паролей</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse v-if="$store.state.logged_in" id="nav-collapse" is-nav>
 

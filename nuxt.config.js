@@ -24,6 +24,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -32,7 +33,14 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
   ],
-
+  serverMiddleware: [
+    // Will register file from project server-middleware directory to handle /server-middleware/* requires
+    { path: '/api', handler: '~/api/index.js' }
+  ],
+  server: {
+    port: 3000,
+    host: "127.0.0.1"
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
@@ -45,17 +53,14 @@ export default {
       poll: 1000
     }
   },
-  serverMiddleware: [
-    // Will register file from project server-middleware directory to handle /server-middleware/* requires
-    { path: '/api', handler: '~/api/index.js' },
-  ],
+
   bootstrapVue: {
     icons: true
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     babel: {
-      compact: true,
-    },
-  },
+      compact: true
+    }
+  }
 }

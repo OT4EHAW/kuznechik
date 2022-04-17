@@ -13,10 +13,11 @@
 <script>
 export default {
   computed: {
-    welcomeMessage() {
+    welcomeMessage () {
       return `Welcome ${this.$store.state.username}!`
     }
   },
-  middleware: ['authToken'],
+
+  middleware: ['authenticated']
 }
 </script>

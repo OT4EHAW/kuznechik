@@ -3,23 +3,22 @@ services:
   mongo:
     container_name: mongo
     image: mongo
-    restart: always
     ports:
-      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+      - 27017:27017
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
-      - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
+      - MONGO_INITDB_ROOT_USERNAME=master
+      - MONGO_INITDB_ROOT_PASSWORD=master1234
+      - MONGO_INITDB_DATABASE=kuznechik
 
-  app:
-    container_name: app
+  web:
+    container_name: web
     build: .
-    # Также пробрасываем порт на котором висит приложение
     ports:
-      - $MANAGER_PORT:$MANAGER_PORT
+      - 3000:3000
     restart: always
     depends_on:
       - mongo
+
 
 
 
