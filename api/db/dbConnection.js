@@ -6,7 +6,7 @@ const DB_HOST_DEV = 'localhost'
 const DB_HOST_PROD = 'mongo'
 const DB_PORT = '27017'
 const DB_NAME = 'kuznechik'
-const uri = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST_DEV}:${DB_PORT}/${DB_NAME}?authSource=admin`
+const uri = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST_PROD}:${DB_PORT}/${DB_NAME}?authSource=admin`
 
 const options = {
   useNewUrlParser: true,
