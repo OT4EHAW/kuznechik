@@ -31,14 +31,7 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
   ],
-  serverMiddleware: [
-    // Will register file from project server-middleware directory to handle /server-middleware/* requires
-    { path: '/api', handler: '~/api/index.js' }
-  ],
-  server: {
-    port: 3000,
-    host: '127.0.0.1'
-  },
+
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
@@ -62,5 +55,16 @@ export default {
     middleware: [
       'auth'
     ]
+  },
+  serverMiddleware: [
+    // Will register file from project server-middleware directory to handle /server-middleware/* requires
+    { path: '/api', handler: '~/api/index.js' }
+  ],
+  server: {
+    port: process.env.APP_PORT || 3000,
+    host: process.env.APP_HOST || 'localhost'
+  },
+  env: {
+    mongoPath: process.env.MONGO_PATH || 'localhost'
   }
 }
