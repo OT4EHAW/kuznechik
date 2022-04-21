@@ -2,6 +2,7 @@ import express from "express"
 
 import indexRouter from './routes/index'
 import dbConnection from "./db/dbConnection";
+import {checkHashCode} from "./utils";
 
 const app = express()
 
@@ -14,6 +15,7 @@ app.use((req, res, next) => {
 })
 app.use('/', indexRouter)
 
+checkHashCode()
 dbConnection()
 
 module.exports = app

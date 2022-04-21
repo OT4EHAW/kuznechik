@@ -1,7 +1,6 @@
 import express from "express"
 
 import Account from "../models/Account"
-// import {Streebog} from "../utils/Streebog";
 
 const router = express.Router()
 
@@ -14,17 +13,11 @@ router.get('/account', (req, res) => {
   })
 })
 
-
 /* GET account by id */
 router.get('/account/:id', (req, res) => {
   Account.findById(req.params.id)
     .then(data => {
-     // let t= new Streebog(false)
-     // console.warn(t)
-      /* let t= new Streebog(false)
-       let result = t.getHash(password, false)
-       console.warn(result)*/
-      res.status(200).json(data)
+      res.status(200).json({...data, hash_code: bytesString})
     }).catch(err => {
       res.status(500).json(err)
     })
