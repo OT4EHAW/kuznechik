@@ -61,6 +61,7 @@ router.post('/account/login', (req, res) => {
 })
 /* GET all */
 router.get('/account', (req, res) => {
+ verify(req.headers.authorization, res)
   Account.find({}).then(data => {
     res.status(200).json(data)
   }).catch(err => {
