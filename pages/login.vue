@@ -6,6 +6,7 @@
 <script>
 
 import LoginModal from "../components/LoginModal";
+import {AUTH_MUTATIONS} from "../store/auth";
 
 export default {
   name: "login",
@@ -27,15 +28,15 @@ export default {
 
     async handleLoginSubmit ({email, password}) {
       this.loading = true
-     this.$axios.get(`/api/account/${email}`)
+      this.$axios.post('/api/account/login', {  _id: email, email, password })
         .then(({data}) => {
           if (!data) {
             this.$toast.error('Пользователь не найден')
             return
           }
           this.$toast.success('Вы успешно зашли в аккаунт')
-          this.$store.commit('onAuth')
-          this.$store.commit('login', data.email)
+          this.$store.commit(AUTH_MUTATIONS.SET_USER, { email: email })
+          this.$store.commit(AUTH_MUTATIONS.SET_TOKEN, data.token)
           console.log("auth",this.$store.state.isAuth)
           this.$router.push('/')
 

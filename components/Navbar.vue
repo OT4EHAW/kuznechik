@@ -60,10 +60,10 @@ computed: {
     return this.isAuth ? userSettings : defaultSettings
   },
   isAuth () {
-    return localStorage.getItem("isAuth") === "true"
+    return this.$store.state.auth.isAuth
   },
   userName () {
-    return localStorage.getItem("username")
+    return this.$store.state.userId
   }
 },
   data: () => {

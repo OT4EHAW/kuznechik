@@ -1,30 +1,16 @@
 
-export const state = {
-   userId: '',
-   isAuth : false,
- }
+export const actions = {
+  async nuxtServerInit ({ dispatch, commit, state }) {
+    const { access_token, refresh_token } = state.auth
 
-
-export const mutations = {
-  onAuth(state) {
-    state.loggedIn  = true
-    localStorage.setItem('isAuth', "true")
-  },
-  offAuth(state) {
-    state.loggedIn  = false
-    localStorage.setItem('isAuth', "false")
-  },
-  login(state, value) {
-    state.userId  = value
-    localStorage.setItem('username', value)
-    state.loggedIn  = true
-    localStorage.setItem('isAuth', "true")
-  },
-  logout(state) {
-    state.userId  = ""
-    localStorage.removeItem('username')
-    state.loggedIn  = false
-    localStorage.setItem('isAuth', "false")
-
+    if (access_token && refresh_token) {
+      try {
+        // refresh the access token
+        await dispatch('auth/refresh')
+      } catch (e) {
+        // catch any errors and automatically logout the user
+        await dispatch('auth/logout')
+      }
+    }
   }
 }

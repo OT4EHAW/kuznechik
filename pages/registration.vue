@@ -1,4 +1,3 @@
-
 <template>
   <registration-modal></registration-modal>
 

@@ -107,7 +107,6 @@ export default {
     }
   },
   computed: {
-
     userValidation () {
       if (this.userId.length === 0) {
         return null
@@ -150,15 +149,15 @@ export default {
     },
     async onSubmit (evt) {
       evt.preventDefault()
-
       this.$axios.post('/api/account/new',
-        { email: this.userId, gost_hash_512: this.userPass }
+        { email: this.userId, password: this.userPass }
       )
         .then(res => {
           this.$toast.success('Вы успешно создали новый аккаунт')
           return { account: res.data }
         }).catch(() => {
-        })
+
+      })
     },
     handleClickLogin () {
       this.$router.push('/login')
