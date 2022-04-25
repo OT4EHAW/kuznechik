@@ -63,7 +63,7 @@ computed: {
     return this.$store.state.auth.isAuth
   },
   userName () {
-    return this.$store.state.userId
+    return this.$store.state.auth.email
   }
 },
   data: () => {
