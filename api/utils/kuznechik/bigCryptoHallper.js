@@ -10,7 +10,7 @@ const buildCryptoHelper = (keyStr) => {
 
 }
 export const bigCryptoHelper = {
-  name: "CFB",
+  name: "CTR",
   getEncryptedStr: (targetStr, keyStr) => {
     const cryptoHelper = buildCryptoHelper(keyStr)
     let targetBuffer = Buffer.from(targetStr);
