@@ -6,7 +6,7 @@ import {Streebog} from "./Streebog";
  * преобразует строку в массив байт из 32-х значений (32 байта = 256 бит)
  * через функцию "Стрибог"
  */
-const getHashArray = (password) => {
+export const getHashArray32Bytes = (password) => {
   const isResult512Bit = false
   const hashCoder = new Streebog()
   return hashCoder.getHashArray(password, isResult512Bit)
@@ -27,7 +27,7 @@ const getHashString = (buffer) =>{
  * возвращает хэш-код длиной в 256 бит
  */
 export const createHashCode = (password) => {
-  const byteArray = getHashArray(password)
+  const byteArray = getHashArray32Bytes(password)
   if (byteArray.length !== 32){
     console.error(byteArray)
     return null

@@ -23,6 +23,7 @@
     "bootstrap-vue": "^2.21.2",
     "btoa": "^1.2.1",
     "core-js": "^3.19.3",
+    "cryptokuznechik": "^1.1.1",
     "express": "^4.17.1",
     "mongoose": "^5.10.0",
     "node-uuid": "^1.4.8",
