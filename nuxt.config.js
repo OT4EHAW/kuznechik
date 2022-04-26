@@ -51,11 +51,6 @@ export default {
       compact: true
     }
   },
-  router: {
-    middleware: [
-      'auth'
-    ]
-  },
   serverMiddleware: [
     // Will register file from project server-middleware directory to handle /server-middleware/* requires
     { path: '/api', handler: '~/api/index.js' }

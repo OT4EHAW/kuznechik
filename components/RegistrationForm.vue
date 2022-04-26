@@ -12,15 +12,7 @@
         >
 
         <b-card-body>
-          <b-form @submit="onSubmit">
-
-            <b-alert v-if="errorMessage" v-model="isAlertShow" variant="danger" dismissible>
-              {{ errorMessage }}
-            </b-alert>
-            <b-alert v-if="successMessage" v-model="isAlertShow" variant="success" dismissible>
-              {{ successMessage }}
-            </b-alert>
-
+          <b-form @submit.stop.prevent="onSubmit">
             <b-form-row>
                 <b-input-group>
                   <b-form-input v-model="userId" placeholder="E-mail" :state="userValidation" id="feedback-user" ></b-form-input>
@@ -92,7 +84,7 @@
 
 <script>
 export default {
-  name: 'RegistrationModal',
+  name: 'RegistrationForm',
   data: function () {
     return {
       userId: '',
@@ -147,16 +139,12 @@ export default {
       }
       return this.userPass === this.userPass2
     },
-    async onSubmit (evt) {
-      evt.preventDefault()
+    async onSubmit () {
       this.$axios.post('/api/account/new',
         { email: this.userId, password: this.userPass }
-      )
-        .then(res => {
+      ).then(res => {
           this.$toast.success('Вы успешно создали новый аккаунт')
-          return { account: res.data }
         }).catch(() => {
-
       })
     },
     handleClickLogin () {

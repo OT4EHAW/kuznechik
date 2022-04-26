@@ -1,16 +1,16 @@
 
 <template>
-  <login-modal @submit="handleLoginSubmit" @link="handleLoginLink"></login-modal>
+  <login-form @submit="handleLoginSubmit" @link="handleLoginLink"></login-form>
 </template>
 
 <script>
 
-import LoginModal from "../components/LoginModal";
+import LoginForm from "../components/LoginForm";
 import {AUTH_MUTATIONS} from "../store/auth";
 
 export default {
   name: "login",
-  components: {LoginModal},
+  components: {LoginForm},
 
   data () {
     return {
@@ -38,7 +38,7 @@ export default {
           this.$store.commit(AUTH_MUTATIONS.SET_USER, { email: email })
           this.$store.commit(AUTH_MUTATIONS.SET_TOKEN, data.token)
           console.log("auth",this.$store.state.isAuth)
-          this.$router.push('/')
+          this.$router.push('/master')
 
         })
         .catch((errorCode ) => {

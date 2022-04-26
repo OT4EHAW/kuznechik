@@ -1,3 +1,5 @@
+import {compile} from "vue-template-compiler";
+
 export const state = () => ({
   isAuth: false,
   id: null, // user id
@@ -34,7 +36,7 @@ export const mutations = {
     state.email = null
     state.access_token = null
     state.refresh_token = null
-    localStorage.removeItem('user')
+    localStorage.removeItem('email')
   }
 }
 

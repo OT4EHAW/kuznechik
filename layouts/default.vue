@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navbar></navbar>
+    <navbar :items="[]"></navbar>
       <nuxt/>
   </div>
 </template>

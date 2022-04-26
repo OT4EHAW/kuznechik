@@ -1,15 +1,15 @@
 <template>
-  <registration-modal></registration-modal>
+  <registration-form></registration-form>
 
 
 </template>
 
 <script>
 
-import RegistrationModal from "../components/RegistrationModal";
+import RegistrationForm from "../components/RegistrationForm";
 export default {
   name:"registration",
-  components: {RegistrationModal},
+  components: {RegistrationForm},
 
 }
 </script>

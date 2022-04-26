@@ -17,11 +17,11 @@ export default {
       return this.$store.state.auth.email
     },
     welcomeMessage () {
-      return this.name ? `Добро пожаловать ${this.name} :)` : "Добро пожаловать :)"
+      return "Здесь будет общая информация о программе"
     }
   },
   layout ({store}) {
-    return store.state.auth.isAuth ? 'user' : "default"
+    return store.state.auth.isAuth ? 'master' : "default"
   },
 }
 </script>

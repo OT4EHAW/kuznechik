@@ -69,7 +69,7 @@
 
 <script>
 export default {
-  name: 'LoginModal',
+  name: 'LoginForm',
   props: {
   },
   data: function () {
