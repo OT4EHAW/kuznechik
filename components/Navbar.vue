@@ -109,7 +109,7 @@ export default {
       this.isAuth = !!this.email
     },
     handleItemClick (index) {
-      this.$router.push(this.items[index].path)
+      this.$router.push(this.navItems[index].path)
     },
     logout () {
       this.$store.commit(AUTH_MUTATIONS.LOGOUT)
