@@ -13,6 +13,16 @@ export const getHashArray32Bytes = (password) => {
 }
 
 /**
+ * преобразует строку в массив байт из 64-х значений (64 байта = 512 бит)
+ * через функцию "Стрибог"
+ */
+export const getHashArray64Bytes = (password) => {
+  const isResult512Bit = true
+  const hashCoder = new Streebog()
+  return hashCoder.getHashArray(password, isResult512Bit)
+}
+
+/**
  * преобразует массив из 32-х байт в символьную строку
 */
 const getHashString = (buffer) =>{
@@ -26,9 +36,21 @@ const getHashString = (buffer) =>{
 /**
  * возвращает хэш-код длиной в 256 бит
  */
-export const createHashCode = (password) => {
+export const createHashCode256 = (password) => {
   const byteArray = getHashArray32Bytes(password)
   if (byteArray.length !== 32){
+    console.error(byteArray)
+    return null
+  }
+  return getHashString(byteArray);
+}
+
+/**
+ * возвращает хэш-код длиной в 512 бит
+ */
+export const createHashCode512 = (password) => {
+  const byteArray = getHashArray64Bytes(password)
+  if (byteArray.length !== 64){
     console.error(byteArray)
     return null
   }
@@ -58,7 +80,7 @@ export const checkHashCode = () => {
   const msg =gost256Msg
   const hashMsg = gost256HashMsg
 
-  const hashMsgResult = createHashCode(msg)
+  const hashMsgResult = createHashCode256(msg)
 
   if (hashMsg !== hashMsgResult){
     console.error("Несовпадение", hashMsgResult)

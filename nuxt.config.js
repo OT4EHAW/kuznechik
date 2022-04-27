@@ -51,6 +51,7 @@ export default {
       compact: true
     }
   },
+  store: true,
   serverMiddleware: [
     // Will register file from project server-middleware directory to handle /server-middleware/* requires
     { path: '/api', handler: '~/api/index.js' }

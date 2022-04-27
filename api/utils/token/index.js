@@ -1,93 +1,94 @@
-import uuid  from 'node-uuid'
-import {Streebog} from "../hashCode/Streebog";
-import {createHashCode} from "../hashCode";
+import tokenHelper from "./tokenHelper";
 
-const createKey = () => {
-  return uuid.v4()
-}
-const getTokenWorkTime = () => {
+const TIMER_SECONDS = 300 //300 seconds = 5 minutes
 
-}
-export const SECRET_KEY = createKey();
-export const refreshToken = createKey();
-const initSecondsCount = 300 //300 seconds
+let userSessionList = []
 
-const encodeBase64urlFromJSON = (obj) => {
-  const str = JSON.stringify(obj)
-  const base64 = btoa(str);
-  return base64
-    .replace(/\+/g, '_')
-    .replace(/\//g, '-')
-    .replace(/=+$/g, '');
+const getUserSession = (userId) => {
+ return  userSessionList.find(session => session.userId === userId)
 }
-const decodedBase64urlToJSON = (base64url) => {
-  let base64 = base64url
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-  const pad = base64.length % 4;
-  if(pad) {
-    if(pad === 1) {
-      throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
-    }
-    base64 += new Array(5-pad).join('=');
+
+const stopUserSession = (userId) => {
+  getUserSession(userId).isAccess = false
+}
+
+const deleteUserSession = (userId) => {
+  const userSession = getUserSession(userId)
+  if (!userSession) {
+    return
   }
-  return JSON.parse(atob(base64));
+  clearTimeout(userSession.accessTimer);
+  clearTimeout(userSession.refreshTimer);
+  userSessionList = userSessionList.filter(session => session.userId !== userId)
+
+}
+
+const initUserSession = (userId, refreshToken) =>{
+  deleteUserSession(userId)
+  userSessionList.push({
+    userId,
+    refreshToken,
+    isAccess: true,
+    accessTimer: setTimeout(()=>{
+      stopUserSession(userId)
+    }, TIMER_SECONDS*1000),
+    refreshTimer: setTimeout(()=>{
+      deleteUserSession(userId)
+    }, TIMER_SECONDS*10000),
+  })
 }
 
 
-export const createAccessToken = (id, time = initSecondsCount) => {
-  const headerCode = encodeBase64urlFromJSON({ alg:"Streebog", typ:"JWT" })
-  const payloadCode = encodeBase64urlFromJSON({ exp: time, user: id})
-  const signature = createHashCode(`${headerCode}.${payloadCode}`, SECRET_KEY)
-  const jwt = `${headerCode}.${payloadCode}.${signature}`
-  console.log("jwt:", jwt)
-  return jwt
+export const createUserToken = (userId) =>{
+  const accessToken =  tokenHelper.createAccess(userId, TIMER_SECONDS)
+  const refreshToken = tokenHelper.createRefresh()
+  initUserSession(userId, refreshToken)
+  return  { accessToken, refreshToken }
 }
 
-export const createRefreshToken = () => {
-  return createKey()
-}
+export const checkUserToken = (accessToken) =>{
+  console.log("Авторизация")
+  if (!accessToken) {
+    console.error("accessToken", accessToken)
+    return false
+  }
+  console.log("accessToken", accessToken)
 
-
-
-
-
-
-
-export const verifyToken = (authorization) => {
-  if (!authorization) {
+  const userId = tokenHelper.getUser(accessToken)
+  console.log("userId", userId)
+  const userSession = getUserSession(userId)
+  if (!userSession) {
+    console.error("Пользователь не проходил процедуру аутентификации")
     return null
   }
-  let tokenParts = authorization
-    .split(' ')[1]
-    .split('.')
-  let signature = crypto
-    .createHmac('SHA256', SECRET_KEY)
-    .update(`${tokenParts[0]}.${tokenParts[1]}`)
-    .digest('base64')
-  if (signature !== tokenParts[2]) {
+  const realAccessToken = tokenHelper.createAccess(userId, TIMER_SECONDS)
+  if (accessToken !== realAccessToken) {
+    console.error("Токен доступа не прошел проверку подлинности")
+    return false
+  }
+  if (!userSession.isAccess){
+    console.error("Токен доступа уже не действителен")
+    return false
+  }
+  return true
+}
+
+export const updateUserToken = (userId, userRefreshToken) =>{
+  const userSession = getUserSession(userId)
+  console.log("userSession", userSession)
+  console.log("allSessions count", userSessionList.length)
+
+  if (!userSession) {
+    console.error("Пользователь не проходил процедуру аутентификации")
     return null
   }
-  return JSON.parse(
-    Buffer.from(tokenParts[1], 'base64').toString(
-      'utf8'
-    )
-  )
+  if (userSession.refreshToken !== userRefreshToken) {
+    console.error("Токен обновления не прошел проверку подлинности")
+    return null
+  }
+  return createUserToken(userId)
 }
 
 
-export const getSignatureUserToken = (userId) => {
-    let head = Buffer.from(
-      JSON.stringify({ alg: 'HS256', typ: 'jwt' })
-    ).toString('base64')
-    let body = Buffer.from(JSON.stringify(userId)).toString(
-      'base64'
-    )
-   return crypto
-      .createHmac('SHA256', SECRET_KEY)
-      .update(`${head}.${body}`)
-      .digest('base64')
-
-};
 
 

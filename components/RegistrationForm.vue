@@ -139,7 +139,7 @@ export default {
       }
       return this.userPass === this.userPass2
     },
-    async onSubmit () {
+    async onSubmit (){
       this.$axios.post('/api/account/new',
         { email: this.userId, password: this.userPass }
       ).then(res => {

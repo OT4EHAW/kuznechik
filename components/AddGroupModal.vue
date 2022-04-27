@@ -9,7 +9,7 @@
     @hidden="resetModal"
     @ok="handleOk"
   >
-    <form  @submit.stop.prevent="handleSubmit">
+    <form>
       <b-form-row>
         <b-input-group>
           <b-form-input v-model="name" placeholder="Название" :state="nameState" id="feedback-user" ></b-form-input>
@@ -109,13 +109,10 @@ export default {
       this.nameState = null
     },
     handleOk(bvModalEvent) {
-      // Prevent modal from closing
-     // bvModalEvent.preventDefault()
-      // Trigger submit handler
       this.handleSubmit()
     },
     async handleSubmit() {
-      this.$axios.post('/api/groups/new',
+      this.$axios.post('/api/group/new',
         { name: this.name, password: this.password }
       )
         .then(res => {

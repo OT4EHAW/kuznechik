@@ -11,17 +11,12 @@
 </template>
 
 <script>
+
 export default {
   computed: {
-    name () {
-      return this.$store.state.auth.email
-    },
     welcomeMessage () {
       return "Здесь будет общая информация о программе"
     }
-  },
-  layout ({store}) {
-    return store.state.auth.isAuth ? 'master' : "default"
   },
 }
 </script>

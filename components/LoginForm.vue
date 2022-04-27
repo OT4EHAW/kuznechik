@@ -12,7 +12,7 @@
         >
           <!--  форма для входа        -->
           <b-card-body>
-            <b-form @submit="onSubmit">
+            <b-form @submit.stop.prevent="onSubmit">
             <!--   поле ввода логина (почты)        -->
               <b-form-row>
                 <b-input-group>
@@ -118,9 +118,9 @@ export default {
       return this.userPass.length >= 8 && /\d/.test(this.userPass)
     },
     async onSubmit (evt) {
-      evt.preventDefault()
       const formData =  {email: this.userId, password: this.userPass }
-      this.$emit('submit', {...formData})
+
+      this.$emit('login', {...formData})
     },
     handleClickRegistration () {
       this.$emit('link')

@@ -1,16 +1,19 @@
 import express from "express"
 
 import Account from "../models/Account"
-import {createAccessToken, createRefreshToken, verifyToken} from "../utils/token";
-import { createHashCode } from "../utils/hashCode";
+import Group from "../models/Group"
+import { createHashCode512} from "../utils/hashCode";
+import {checkUserToken, createUserToken, updateUserToken} from "../utils/token";
+
 
 const router = express.Router()
 
-const verify = (token, res) => {
-  if (verifyToken(token)) {
-    return
+const verify = (req, res) => {
+  const accessToken = req.headers.token
+  console.log("token",accessToken)
+  if (!checkUserToken(accessToken)) {
+    res.status(401).send("invalid token...");
   }
-  res.status(401).send("invalid token...");
 }
 
 /* POST create new account */
@@ -19,16 +22,17 @@ router.post('/account/new', (req, res) => {
   Account.findById(email)
     .then(data => {
       if (data !== null || data === {}) {
-        return res.status(406).json({})
+        // уже есть пользователь с таким логином
+        return res.status(409).json({})
       }
-      const gost_hash_512 = createHashCode(password)
+      const gost_hash_512 = createHashCode512(password)
       new Account({
         _id: email,
         email,
         gost_hash_512
       }).save()
         .then(data => {
-          res.status(201).json(data)
+          res.status(200).json(data)
         }).catch(error => {
         res.status(500).json(error)
       })
@@ -37,54 +41,109 @@ router.post('/account/new', (req, res) => {
      })
 })
 
-/* POST auth account */
+/* POST login account */
 router.post('/account/login', (req, res) => {
-  const { _id, email, password } = req.body
-  Account.findById(_id)
+  const { email, password } = req.body
+  Account.findById(email)
     .then(account => {
       // аутентификация - проверка пароля по хэш-коду
-      const gost_hash_512 = createHashCode(password) // потом заменить на hashCode-функцию
+      const gost_hash_512 = createHashCode512(password) // потом заменить на hashCode-функцию
       if (account.gost_hash_512 !== gost_hash_512) {
-        return res.status(401).json(null)
+        return res.status(406).json(null)
       }
-      // генетация токена для доступа и ключа для его обновления
-      const access_token = createAccessToken(_id)
-      const refresh_token = createRefreshToken()
-      // передача токена
+      let token = null
+      try {
+        // генетация токена
+        token = createUserToken(account._id)
+      } catch {
+        return res.status(520).json(null)
+      }
+
+      // отправка ответа с полученными данными
       res.status(200).json({
-        user: { _id: account._id, email: account.email },
-        token: { access_token, refresh_token }
+        user: {
+          _id: account._id,
+          email: account.email
+        },
+        token: {
+          access_token: token.accessToken,
+          refresh_token:  token.refreshToken
+        }
       })
     }).catch(err => {
       res.status(500).json(err)
     })
 })
+
+/* POST refresh account */
+router.post('/account/refresh', (req, res) => {
+  const { _id, refresh_token } = req.body
+  Account.findById(_id)
+    .then(account => {
+      // обновление токена
+      const token = updateUserToken(account._id, refresh_token)
+
+
+      if (!token) {
+        return res.status(406).json(null)
+      }
+      res.status(200).json({
+        user: {
+          _id: account._id,
+          email: account.email
+        },
+        token: {
+          access_token: token.accessToken,
+          refresh_token:  token.refreshToken
+        }
+      })
+    }).catch(err => {
+    res.status(500).json(err)
+  })
+})
+
 /* GET all */
-router.get('/account', (req, res) => {
- verify(req.headers.authorization, res)
-  Account.find({}).then(data => {
+router.get('/group', (req, res) => {
+  verify(req, res)
+  Group.find().then(data => {
     res.status(200).json(data)
   }).catch(err => {
     res.status(500).json(err)
   })
 })
 
-/* POST refresh account */
-/*
-router.post('/account/refresh', (req, res) => {
-  const { refresh_token } = req.body
-  const access_token = ""
-  Account.findById(email)
-    .then(account => {
-      if (account.gost_hash_512 !== gost_hash_512) {
-        return res.status(401).json(null)
+/* POST create new account */
+router.post('/group/new', (req, res) => {
+  const { name, password } = req.body
+  Group.findById(name)
+    .then(data => {
+      if (data !== null || data === {}) {
+        // уже есть группа с таким названием
+        return res.status(406).json({})
       }
-      res.status(200).json({ user: {id: account.id, email: account.email}, token:{ access_token, refresh_token }})
-    }).catch(err => {
-    res.status(500).json(err)
+      const gost_hash_512 = createHashCode512(password)
+      new Group({
+        name,
+        gost_hash_512
+      }).save()
+        .then(data => {
+          res.status(200).json({items: data})
+        }).catch(error => {
+        res.status(500).json(error)
+      })
+    }).catch(error=>{
+    res.status(500).json(error)
   })
 })
-*/
+/*/!* GET all *!/
+router.get('/group/:id', (req, res) => {
+  verify(req.headers.authorization, res)
+  Record.find(filter).then(data => {
+    res.status(200).json(data)
+  }).catch(err => {
+    res.status(500).json(err)
+  })
+})*/
 
 
 

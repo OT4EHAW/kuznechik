@@ -16,7 +16,7 @@
 
     <b-nav vertical class="bd-links w-auto">
       <b-nav-item
-        v-for="(item, index) in items"
+        v-for="(item, index) in items()"
         :active="isActive(item.id)"
         :key="item.id"
         @click="selectHandler(item.id)"
@@ -32,46 +32,49 @@
 </template>
 
 <script>
-import {GROUP_MUTATIONS} from "../store/groups";
+import {GROUP_MUTATIONS} from "../store";
 import AddGroupModal from "./AddGroupModal";
+import { mapState } from "vuex";
 
 export default {
   name: "sidebar",
   components: {AddGroupModal},
-  data ()  {
-    return {
-      selectedKey: 0
-    }
-},
   computed: {
+    ...mapState(["groupId", "groupList"]),
+  },
+  methods: {
     items () {
       return [
         {
-          id: 0,
+          id: "-1",
           name: "Все записи",
         },
         {
-          id: 1,
+          id: "-2",
           name: "Работа",
         },
         {
-          id: 2,
-          name: "Магазины",
+          id: "-3",
+          name: "Вуз",
         },
+        {
+          id: "-4",
+          name: "Игры",
+        },
+        {
+          id: "-5",
+          name: "Соцсети",
+        },
+
+        ...this.groupList
       ]
-    }
-  },
-  methods: {
+    },
     isActive (key) {
-      return this.selectedKey === key
+      return this.groupId === key
     },
     selectHandler (key) {
-      this.selectedKey = key
       this.$store.commit(GROUP_MUTATIONS.SET_GROUP_ID, key)
     },
-    addHandler () {
-
-    }
   }
 }
 </script>
