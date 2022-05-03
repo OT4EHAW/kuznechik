@@ -106,7 +106,13 @@ router.post('/account/refresh', (req, res) => {
 /* GET all */
 router.get('/group', (req, res) => {
   verify(req, res)
-  Group.find().sort({name: 0}).then(data => {
+  const user_id = tokenHelper.getUser(req.headers.authorization)
+  if (!user_id) {
+    console.error("user_id",user_id);
+    res.status(401).send("пользователь не определен");
+    return
+  }
+  Group.find({user_id: user_id}).sort({name: 0}).then(data => {
     res.status(200).json({items: data})
   }).catch(err => {
     res.status(500).json(err)

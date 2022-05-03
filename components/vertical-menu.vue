@@ -44,11 +44,7 @@ export default {
   },
   methods: {
     items () {
-      return [
-        {
-          id: "-1",
-          name: "Все записи",
-        },
+      const demoGroups = [
         {
           id: "-2",
           name: "Работа",
@@ -65,7 +61,21 @@ export default {
           id: "-5",
           name: "Соцсети",
         },
-
+      ]
+      if (!this.groupList || this.groupList.length === 0) {
+        return [
+          {
+            id: "-1",
+            name: "Все записи",
+          },
+          ...demoGroups
+        ]
+      }
+      return [
+        {
+          id: "-1",
+          name: "Все записи",
+        },
         ...this.groupList.map(item=>({
           id: item._id,
           name:  item.name
