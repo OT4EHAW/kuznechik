@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import {GROUP_MUTATIONS} from "../store";
+
 export default {
   name: "AddGroupModal",
   props:{
@@ -108,17 +110,18 @@ export default {
       this.name = ''
       this.nameState = null
     },
-    handleOk(bvModalEvent) {
-      this.handleSubmit()
-    },
-    async handleSubmit() {
+    handleOk(event) {
+
+     console.warn("handleOk")
+      console.warn("handleOk")
       this.$axios.post('/api/group/new',
         { name: this.name, password: this.password }
       )
         .then(res => {
+          this.$store.commit(GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST)
           this.$toast.success('Вы успешно создали новую группу')
         }).catch(() => {
-
+        this.$toast.error('Не удалось создать группу')
       })
     },
     changeShowPassword () {
@@ -143,7 +146,7 @@ export default {
       }
       return this.password === this.password2
     },
-  }
+    },
 }
 </script>
 

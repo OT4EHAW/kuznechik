@@ -66,7 +66,10 @@ export default {
           name: "Соцсети",
         },
 
-        ...this.groupList
+        ...this.groupList.map(item=>({
+          id: item._id,
+          name:  item.name
+        }))
       ]
     },
     isActive (key) {

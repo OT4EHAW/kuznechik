@@ -91,7 +91,6 @@ export default {
   methods: {
     setNavItems () {
       const accessToken = this.$store.state.access_token
-      console.log("accessToken", accessToken)
 
       if (!accessToken) {
         this.navItems = []

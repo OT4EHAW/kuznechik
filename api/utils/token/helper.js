@@ -47,6 +47,8 @@ let SECRET_KEY = createKey();
   getUser: (accessToken) => {
     const payloadJSON = accessToken.split(".")[1]
     const payload = decodedBase64urlFromJSON(payloadJSON)
+    console.log("user:", payload.user)
+
     return payload.user
   }
 }

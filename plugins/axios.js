@@ -1,3 +1,4 @@
+import {AUTH_MUTATIONS} from "../store";
 
 export default function ({ $axios, $toast, store, redirect }) {
   $axios.onRequest((config) => {
@@ -15,16 +16,16 @@ export default function ({ $axios, $toast, store, redirect }) {
     let msg = 'Сервер вернул ошибку'
     const code = error.response.status
     if (code === 401) {
-      if (!store.state.refresh_token) {
-        redirect('/login')
-      }
+      store.commit(AUTH_MUTATIONS.LOGOUT)
+      redirect('/login')
     }
     switch (code) {
+      case 401: msg = 'Ошибка авторизации'; break
+      case 404: msg = 'Пользователь не найден'; break
+      case 406: msg = 'Неверный пароль'; break
+      case 409: msg = 'Имя должно быть уникальным'; break
       case 500: msg = 'На сервере возникла ошибка'; break
       case 520: msg = 'Не удалось сформировать токен'; break
-      case 406: msg = 'Неверный пароль'; break
-      case 401: msg = 'Ошибка авторизации'; break
-      case 409: msg = 'Имя должно быть уникальным'; break
     }
     $toast.error(msg)
     console.error(msg, error.response.data)

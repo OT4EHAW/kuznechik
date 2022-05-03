@@ -12,7 +12,8 @@ export const AUTH_MUTATIONS = {
 // reusable aliases for mutations
 export const GROUP_MUTATIONS = {
   SET_GROUP_ID: 'SET_GROUP_ID',
-  SET_GROUP_LIST: 'SET_GROUP_LIST'
+  SET_GROUP_LIST: 'SET_GROUP_LIST',
+  NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST"
 }
 
 
@@ -27,6 +28,7 @@ const createStore = () => {
 
       groupId: '-1',
       groupList: [],
+      needUpdate: false
     },
     mutations: {
       // store the logged in user in the state
@@ -46,6 +48,7 @@ const createStore = () => {
         state.refresh_token = refresh_token
         localStorage.setItem('refresh_token', refresh_token)
       },
+
       // clear our the state, essentially logging out the user
       [AUTH_MUTATIONS.LOGOUT] (state) {
         state.isAuth = false
@@ -62,6 +65,10 @@ const createStore = () => {
       },
       [GROUP_MUTATIONS.SET_GROUP_LIST] (state, list) {
         state.groupList = list.slice() || []
+        state.needUpdate = false
+      },
+      [GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST] (state) {
+        state.needUpdate = true
       }
 
     }

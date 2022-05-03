@@ -23,9 +23,12 @@ export default {
   name: "master",
   components: {Sidebar},
   middleware: 'auth',
-  computed: mapState(["access_token"]),
+  computed: mapState(["access_token", "needUpdate"]),
   watch: {
     access_token () {
+      this.loadIGroups()
+    },
+    needUpdate () {
       this.loadIGroups()
     }
   },
@@ -34,7 +37,6 @@ export default {
   },
   methods: {
     async loadIGroups () {
-
       if (!this.access_token) {
         return
       }

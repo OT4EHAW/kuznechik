@@ -4,16 +4,18 @@ import Account from "../models/Account"
 import Group from "../models/Group"
 import { checkUserToken, createUserToken, updateUserToken } from "../utils/token";
 import { hashHelper } from "../utils/hash";
+import tokenHelper from "../utils/token/helper";
 
 
 const router = express.Router()
 
 const verify = (req, res) => {
   const accessToken = req.headers.authorization
-  console.log("req",req)
   if (!checkUserToken(accessToken)) {
     res.status(401).send("invalid token...");
+    return false
   }
+  return true
 }
 
 /* POST create new account */
@@ -23,7 +25,7 @@ router.post('/account/new', (req, res) => {
     .then(data => {
       if (data !== null || data === {}) {
         // уже есть пользователь с таким логином
-        return res.status(409).json({})
+        return res.status(409).send("уже есть пользователь с таким логином");
       }
       const gost_hash_512 = hashHelper.streebog_512(password)
       new Account({
@@ -34,10 +36,10 @@ router.post('/account/new', (req, res) => {
         .then(data => {
           res.status(200).json(data)
         }).catch(error => {
-        res.status(500).json(error)
+        res.status(500).send("ошибка при создании аккаунгта");
       })
     }).catch(error=>{
-      res.status(500).json(error)
+      res.status(500).send(error)
      })
 })
 
@@ -49,14 +51,15 @@ router.post('/account/login', (req, res) => {
       // аутентификация - проверка пароля по хэш-коду
       const gost_hash_512 = hashHelper.streebog_512(password) // потом заменить на hash-функцию
       if (account.gost_hash_512 !== gost_hash_512) {
-        return res.status(406).json(null)
+       res.status(406).send("неверный пароль");
+        return
       }
       let token = null
       try {
         // генетация токена
         token = createUserToken(account._id)
       } catch {
-        return res.status(520).json(null)
+        res.status(520).json(null)
       }
 
       // отправка ответа с полученными данными
@@ -71,7 +74,7 @@ router.post('/account/login', (req, res) => {
         }
       })
     }).catch(err => {
-      res.status(500).json(err)
+      res.status(404).send("пользователь не найден");
     })
 })
 
@@ -82,10 +85,8 @@ router.post('/account/refresh', (req, res) => {
     .then(account => {
       // обновление токена
       const token = updateUserToken(_id, refresh_token)
-
-
       if (!token) {
-        return res.status(406).json(null)
+        return res.status(401).send("невозможно обновить токен");
       }
       res.status(200).json({
         user: {
@@ -98,15 +99,15 @@ router.post('/account/refresh', (req, res) => {
         }
       })
     }).catch(err => {
-    res.status(500).json(err)
+    res.status(500).send("пользователь не найден");
   })
 })
 
 /* GET all */
 router.get('/group', (req, res) => {
   verify(req, res)
-  Group.find().then(data => {
-    res.status(200).json(data)
+  Group.find().sort({name: 0}).then(data => {
+    res.status(200).json({items: data})
   }).catch(err => {
     res.status(500).json(err)
   })
@@ -114,25 +115,46 @@ router.get('/group', (req, res) => {
 
 /* POST create new account */
 router.post('/group/new', (req, res) => {
+  verify(req, res)
   const { name, password } = req.body
-  Group.findById(name)
+  Group.find({ name })
     .then(data => {
-      if (data !== null || data === {}) {
+      console.log("data",data.length);
+      if (data.length !== 0) {
         // уже есть группа с таким названием
-        return res.status(406).json({})
+        console.error("data",data.length);
+        res.status(401).send("название группы должно быть уникальным");
+        return
       }
       const gost_hash_512 = hashHelper.streebog_512(password)
+      if (!gost_hash_512) {
+        console.error("gost_hash_512",gost_hash_512);
+        res.status(500).send("ошибка обработки пароля");
+        return
+      }
+      const user_id = tokenHelper.getUser(req.headers.authorization)
+      if (!user_id) {
+        console.error("user_id",user_id);
+        res.status(401).send("пользователь не определен");
+        return
+      }
+      console.warn(" new Group", name);
       new Group({
         name,
-        gost_hash_512
+        gost_hash_512,
+        user_id
       }).save()
         .then(data => {
+          console.log(data);
+
           res.status(200).json({items: data})
         }).catch(error => {
-        res.status(500).json(error)
+        console.error(error);
+        res.status(500).send(error)
       })
     }).catch(error=>{
-    res.status(500).json(error)
+    console.error("error",error)
+    res.status(500).send(error)
   })
 })
 /*/!* GET all *!/
