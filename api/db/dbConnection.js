@@ -6,7 +6,7 @@ const DB_PASSWORD = 'master1234'
 const DB_HOST_PROD = 'mongo'*/
 const DB_HOST = process.env.MONGO_PATH || "localhost"
 const DB_PORT = '27017'
-const DB_NAME = 'kuznechik'
+const DB_NAME = 'cipher'
 const uri = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`
 
 const options = {

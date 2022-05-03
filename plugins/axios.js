@@ -6,10 +6,8 @@ export default function ({ $axios, $toast, store, redirect }) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
       'Access-Control-Allow-Headers': 'Authorization',
-      Authorization: `Bearer ${jwt}`
-
+      Authorization: jwt
     }
-
     console.log(config)
   })
 

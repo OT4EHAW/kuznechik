@@ -9,7 +9,7 @@ services:
       MONGO_PATH: mongo
       MONGO_INITDB_ROOT_USERNAME: master
       MONGO_INITDB_ROOT_PASSWORD: master1234
-      MONGO_INITDB_DATABASE: kuznechik
+      MONGO_INITDB_DATABASE: cipher
 
   web:
     container_name: web

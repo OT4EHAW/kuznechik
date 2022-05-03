@@ -10,6 +10,11 @@ const groupSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+    userId: {
+      type: String,
+      required: true,
+      unique: true
+    },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

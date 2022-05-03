@@ -2,15 +2,15 @@ import express from "express"
 
 import Account from "../models/Account"
 import Group from "../models/Group"
-import { createHashCode512} from "../utils/hashCode";
-import {checkUserToken, createUserToken, updateUserToken} from "../utils/token";
+import { checkUserToken, createUserToken, updateUserToken } from "../utils/token";
+import { hashHelper } from "../utils/hash";
 
 
 const router = express.Router()
 
 const verify = (req, res) => {
-  const accessToken = req.headers.token
-  console.log("token",accessToken)
+  const accessToken = req.headers.authorization
+  console.log("req",req)
   if (!checkUserToken(accessToken)) {
     res.status(401).send("invalid token...");
   }
@@ -25,7 +25,7 @@ router.post('/account/new', (req, res) => {
         // уже есть пользователь с таким логином
         return res.status(409).json({})
       }
-      const gost_hash_512 = createHashCode512(password)
+      const gost_hash_512 = hashHelper.streebog_512(password)
       new Account({
         _id: email,
         email,
@@ -47,7 +47,7 @@ router.post('/account/login', (req, res) => {
   Account.findById(email)
     .then(account => {
       // аутентификация - проверка пароля по хэш-коду
-      const gost_hash_512 = createHashCode512(password) // потом заменить на hashCode-функцию
+      const gost_hash_512 = hashHelper.streebog_512(password) // потом заменить на hash-функцию
       if (account.gost_hash_512 !== gost_hash_512) {
         return res.status(406).json(null)
       }
@@ -81,7 +81,7 @@ router.post('/account/refresh', (req, res) => {
   Account.findById(_id)
     .then(account => {
       // обновление токена
-      const token = updateUserToken(account._id, refresh_token)
+      const token = updateUserToken(_id, refresh_token)
 
 
       if (!token) {
@@ -121,7 +121,7 @@ router.post('/group/new', (req, res) => {
         // уже есть группа с таким названием
         return res.status(406).json({})
       }
-      const gost_hash_512 = createHashCode512(password)
+      const gost_hash_512 = hashHelper.streebog_512(password)
       new Group({
         name,
         gost_hash_512

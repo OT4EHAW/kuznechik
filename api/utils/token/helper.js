@@ -1,5 +1,5 @@
-import {cryptoHelper} from "../kuznechik/cryptoHelper";
 import uuid from "node-uuid";
+import {signatureHelper} from "./signature";
 
 export const encodeBase64urlToJSON = (obj) => {
   const str = JSON.stringify(obj)
@@ -36,7 +36,7 @@ let SECRET_KEY = createKey();
     const headerJSON = encodeBase64urlToJSON({ alg: "Streebog", typ: "JWT" })
     const payloadJSON = encodeBase64urlToJSON({ exp: time, user: userId })
     const signatureStr = `${headerJSON}.${payloadJSON}`
-    const signature = cryptoHelper.getEncryptedStr(signatureStr, SECRET_KEY)
+    const signature = signatureHelper.hmac(signatureStr, SECRET_KEY)
     const jwt = `${headerJSON}.${payloadJSON}.${signature}`
     console.log("jwt:", jwt)
     return jwt

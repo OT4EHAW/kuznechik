@@ -1,4 +1,4 @@
-import {Streebog2} from "./Streebog2";
+
 import {Streebog} from "./Streebog";
 
 
@@ -24,7 +24,7 @@ export const getHashArray64Bytes = (password) => {
 
 /**
  * преобразует массив из 32-х байт в символьную строку
-*/
+ */
 const getHashString = (buffer) =>{
   return Array
     .from (new Uint8Array (buffer))

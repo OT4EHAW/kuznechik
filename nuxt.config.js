@@ -3,7 +3,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: 'Менеджер паролей',
-    title: 'kuznechik',
+    title: 'cipher',
     htmlAttrs: {
       lang: 'en'
     },

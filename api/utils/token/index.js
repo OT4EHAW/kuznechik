@@ -1,4 +1,4 @@
-import tokenHelper from "./tokenHelper";
+import tokenHelper from "./helper";
 
 const TIMER_SECONDS = 300 //300 seconds = 5 minutes
 

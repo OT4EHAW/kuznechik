@@ -1,4 +1,5 @@
 import values from "./values";
+
 export class Streebog {
   h = []
   N = []
