@@ -129,7 +129,7 @@ router.post('/group/new', (req, res) => {
       if (data.length !== 0) {
         // уже есть группа с таким названием
         console.error("data",data.length);
-        res.status(401).send("название группы должно быть уникальным");
+        res.status(409).send("название группы должно быть уникальным");
         return
       }
       const gost_hash_512 = hashHelper.streebog_512(password)

@@ -5,21 +5,27 @@
     title="Добавление группы паролей"
     cancel-title="Отмена"
     ok-title="Добавить"
+    :ok-disabled="!nameValidation || !passValidation || !passValidation2"
     @show="resetModal"
     @hidden="resetModal"
     @ok="handleOk"
   >
-    <form>
+    <form @submit.stop.prevent="handleSubmit">
       <b-form-row>
         <b-input-group>
-          <b-form-input v-model="name" placeholder="Название" :state="nameState" id="feedback-user" ></b-form-input>
+          <b-form-input
+            id="feedback-user"
+            placeholder="Название"
+            :state="nameValidation"
+            v-model="name"
+          />
           <b-input-group-append>
             <b-input-group-text>
               <b-icon  icon="server" ></b-icon>
             </b-input-group-text>
           </b-input-group-append>
         </b-input-group>
-        <b-form-invalid-feedback :state="nameState">
+        <b-form-invalid-feedback :state="nameValidation">
           Некорректное название
         </b-form-invalid-feedback>
         <b-form-valid-feedback :state="nameValidation">
@@ -28,7 +34,13 @@
 
       <b-form-row class="mt-3">
         <b-input-group>
-          <b-form-input placeholder="Пароль" v-model="password" :state="passValidation" id="feedback-pass" :type="isShowPassword ? 'text' : 'password'"></b-form-input>
+          <b-form-input
+            id="feedback-pass"
+            placeholder="Пароль"
+            :state="passValidation"
+            :type="isShowPassword ? 'text' : 'password'"
+            v-model="password"
+          />
           <b-input-group-append is-text  role="button" @click="changeShowPassword">
                   <span  v-if="isShowPassword" >
                      <b-icon  size="sm" text="icon"  variant="icon"  icon="eye" ></b-icon>
@@ -47,7 +59,13 @@
 
       <b-form-row class="mt-3">
         <b-input-group>
-          <b-form-input placeholder="Повторите пароль" v-model="password2" :state="passValidation2" id="feedback-pass-2" :type="isShowPassword2 ? 'text' : 'password'"></b-form-input>
+          <b-form-input
+            id="feedback-pass-2"
+            placeholder="Повторите пароль"
+            :state="passValidation2"
+            :type="isShowPassword2 ? 'text' : 'password'"
+            v-model="password2"
+         />
           <b-input-group-append is-text  role="button" @click="changeShowPassword2">
                   <span  v-if="isShowPassword2" >
                      <b-icon  size="sm" text="icon"  variant="icon"  icon="eye" ></b-icon>
@@ -92,13 +110,12 @@ export default {
       passFeedback: '',
     }
   },
-  methods: {
+  computed: {
     nameValidation () {
       if (this.name.length === 0) {
         return null
       }
-      const re = /(.+)@(.+){2,}\.(.+){2,}/
-      return re.test(this.name.toLowerCase())
+      return true
     },
     passValidation () {
       return this.passFeedbackString()
@@ -106,23 +123,11 @@ export default {
     passValidation2 () {
       return this.passFeedbackString2()
     },
+  },
+  methods: {
     resetModal() {
       this.name = ''
       this.nameState = null
-    },
-    handleOk(event) {
-
-     console.warn("handleOk")
-      console.warn("handleOk")
-      this.$axios.post('/api/group/new',
-        { name: this.name, password: this.password }
-      )
-        .then(res => {
-          this.$store.commit(GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST)
-          this.$toast.success('Вы успешно создали новую группу')
-        }).catch(() => {
-        this.$toast.error('Не удалось создать группу')
-      })
     },
     changeShowPassword () {
       this.isShowPassword = !this.isShowPassword
@@ -146,7 +151,24 @@ export default {
       }
       return this.password === this.password2
     },
+    handleOk(event) {
+      // Prevent modal from closing
+      event.preventDefault()
+      // Trigger submit handler
+      this.handleSubmit()
     },
+    handleSubmit () {
+      this.$axios.post('/api/group/new',
+        { name: this.name, password: this.password }
+      )
+        .then(res => {
+          this.$store.commit(GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST)
+          this.$toast.success('Вы успешно создали новую группу')
+        }).catch(() => {
+        this.$toast.error('Не удалось создать группу')
+      })
+    }
+  },
 }
 </script>
 

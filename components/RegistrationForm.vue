@@ -15,7 +15,12 @@
           <b-form @submit.stop.prevent="onSubmit">
             <b-form-row>
                 <b-input-group>
-                  <b-form-input v-model="userId" placeholder="E-mail" :state="userValidation" id="feedback-user" ></b-form-input>
+                  <b-form-input
+                    v-model="userId"
+                    placeholder="E-mail"
+                    :state="userValidation"
+                    id="feedback-user"
+                  ></b-form-input>
                   <b-input-group-append>
                     <b-input-group-text>
                       <b-icon  icon="envelope" ></b-icon>
