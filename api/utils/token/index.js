@@ -64,9 +64,17 @@ export const checkUserToken = (accessToken) =>{
     return false
   }
   console.log("accessToken", accessToken)
-
   const userId = tokenHelper.getUser(accessToken)
+  if (!userId) {
+    console.error("Пользователь не определен")
+    return null
+  }
   console.log("userId", userId)
+  const algName = tokenHelper.getAlg(accessToken)
+  if (algName !== tokenHelper.algName) {
+    console.error("Неверный алгоритм шифрования")
+    return null
+  }
   const userSession = getUserSession(userId)
   if (!userSession) {
     console.error("Пользователь не проходил процедуру аутентификации")

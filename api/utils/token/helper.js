@@ -29,7 +29,7 @@ const createKey = () => {
 let SECRET_KEY = createKey();
 const ALG_NAME = "HMAC_GOSTR3411_2012_256"
 const tokenHelper = {
-  name: ALG_NAME,
+  algName: ALG_NAME,
   createAccess: (userId, time) => {
     const headerJSON = encodeBase64urlToJSON({ alg: ALG_NAME, typ: "JWT" })
     const payloadJSON = encodeBase64urlToJSON({ exp: time, user: userId })
@@ -46,8 +46,13 @@ const tokenHelper = {
     const payloadJSON = accessToken.split(".")[1]
     const payload = decodedBase64urlFromJSON(payloadJSON)
     console.log("user:", payload.user)
-
     return payload.user
+  },
+  getAlg: (accessToken) => {
+    const headerJSON = accessToken.split(".")[0]
+    const header = decodedBase64urlFromJSON(headerJSON)
+    console.log("alg:", header.alg)
+    return header.alg
   },
    updateKey: () => {
      SECRET_KEY = createKey();
