@@ -15,17 +15,26 @@ const stopUserSession = (userId) => {
 const deleteUserSession = (userId) => {
   const userSession = getUserSession(userId)
   if (!userSession) {
-    return
+    return []
   }
+  userSessionList = userSessionList.filter(session => session.userId !== userId)
   clearTimeout(userSession.accessTimer);
   clearTimeout(userSession.refreshTimer);
-  userSessionList = userSessionList.filter(session => session.userId !== userId)
-
+  const invalidRefreshToken = {
+    value: userSession.refreshToken,
+    isDangerous: false,
+  }
+  // через 10 секунд считаем отправку использованного refresh-токена УГРОЗОЙ
+  setTimeout(()=>{
+    invalidRefreshToken.isDangerous = true
+  }, 10*1000)
+  userSession.invalidRefreshTokenList.push(invalidRefreshToken)
+  return userSession.invalidRefreshTokenList;
 }
 
 const initUserSession = (userId, refreshToken) =>{
-  deleteUserSession(userId)
-  userSessionList.push({
+  const invalidRefreshTokenList = deleteUserSession(userId)
+  const userSession = {
     userId,
     refreshToken,
     isAccess: true,
@@ -35,7 +44,9 @@ const initUserSession = (userId, refreshToken) =>{
     refreshTimer: setTimeout(()=>{
       deleteUserSession(userId)
     }, TIMER_SECONDS*10000),
-  })
+    invalidRefreshTokenList: [...invalidRefreshTokenList],
+  }
+  userSessionList.push(userSession)
 }
 
 
@@ -84,6 +95,11 @@ export const updateUserToken = (userId, userRefreshToken) =>{
   }
   if (userSession.refreshToken !== userRefreshToken) {
     console.error("Токен обновления не прошел проверку подлинности")
+    const invalidRefreshToken = userSession.invalidRefreshTokenList.find(refresh => refresh.value === userRefreshToken)
+    if (invalidRefreshToken.isDangerous) {
+      console.warn("Прислан используемый ранее refresh-токен. Необходима повторная авторизация")
+      deleteUserSession(userId)
+    }
     return null
   }
   return createUserToken(userId)

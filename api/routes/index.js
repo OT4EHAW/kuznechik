@@ -9,15 +9,6 @@ import tokenHelper from "../utils/token/helper";
 
 const router = express.Router()
 
-const verify = (req, res) => {
-  const accessToken = req.headers.authorization
-  if (!checkUserToken(accessToken)) {
-    res.status(401).send("invalid token...");
-    return false
-  }
-  return true
-}
-
 /* POST create new account */
 router.post('/account/new', (req, res) => {
   const { email, password } = req.body
@@ -105,7 +96,10 @@ router.post('/account/refresh', (req, res) => {
 
 /* GET all */
 router.get('/group', (req, res) => {
-  verify(req, res)
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
   const user_id = tokenHelper.getUser(req.headers.authorization)
   if (!user_id) {
     console.error("user_id",user_id);
@@ -121,7 +115,10 @@ router.get('/group', (req, res) => {
 
 /* POST create new account */
 router.post('/group/new', (req, res) => {
-  verify(req, res)
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
   const { name, password } = req.body
   Group.find({ name })
     .then(data => {

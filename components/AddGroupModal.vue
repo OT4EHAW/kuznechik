@@ -153,7 +153,7 @@ export default {
     },
     handleOk(event) {
       // Prevent modal from closing
-      event.preventDefault()
+    //  event.preventDefault()
       // Trigger submit handler
       this.handleSubmit()
     },
