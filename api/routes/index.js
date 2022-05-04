@@ -2,12 +2,20 @@ import express from "express"
 
 import Account from "../models/Account"
 import Group from "../models/Group"
+import Record from "../models/Record"
 import { checkUserToken, createUserToken, updateUserToken } from "../utils/token";
 import { hashHelper } from "../utils/hash";
 import tokenHelper from "../utils/token/helper";
+import {cipherHelper} from "../utils/cipher";
 
 
 const router = express.Router()
+
+
+
+/**
+ * ACCOUNT - профиль пользователя для аутентификации
+ */
 
 /* POST create new account */
 router.post('/account/new', (req, res) => {
@@ -94,7 +102,11 @@ router.post('/account/refresh', (req, res) => {
   })
 })
 
-/* GET all */
+/**
+ * GROUP - группа записей пользователя
+ */
+
+/* GET user groups*/
 router.get('/group', (req, res) => {
   if (!checkUserToken(req.headers.authorization)) {
     res.status(401).send("invalid token...");
@@ -113,7 +125,7 @@ router.get('/group', (req, res) => {
   })
 })
 
-/* POST create new account */
+/* POST create new group for user*/
 router.post('/group/new', (req, res) => {
   if (!checkUserToken(req.headers.authorization)) {
     res.status(401).send("invalid token...");
@@ -149,8 +161,7 @@ router.post('/group/new', (req, res) => {
       }).save()
         .then(data => {
           console.log(data);
-
-          res.status(200).json({items: data})
+          res.status(200).json(data)
         }).catch(error => {
         console.error(error);
         res.status(500).send(error)
@@ -160,6 +171,117 @@ router.post('/group/new', (req, res) => {
     res.status(500).send(error)
   })
 })
+
+
+/**
+ * RECORD - запись пользователя о доступе к некоторому ресурсу
+ */
+
+/* GET all group records*/
+router.get('/record', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const { group_id } = req.body
+  Group.findById(group_id).then(data => {
+    Record.find({group_id: group_id}).sort({label: 0}).then(data => {
+      res.status(200).json({items: data})
+    }).catch(err => {
+      res.status(500).send("не удалось получить записи для указанной группы");
+    })
+  }).catch(err => {
+    res.status(500).send("не удалось получить группу");
+  })
+})
+
+/* POST open encrypted record fields*/
+router.post('/record/open', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const {group, record_id} = req.body
+  Group.findById(group._id).then(data => {
+    const gost_hash_512 = hashHelper.streebog_512(group.password)
+    if (data.gost_hash_512 !== gost_hash_512) {
+      res.status(406).send("неверный пароль для указанной группы");
+      return
+    }
+    Record.findById(record_id).then(data => {
+      const login_decrypted = cipherHelper.kuznechikDecrypt(data.login_encrypted, group.password)
+      const password_decrypted = cipherHelper.kuznechikDecrypt(data.password_encrypted, group.password)
+      const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${login_decrypted}${password_decrypted}`)
+      if (encrypted_fields_gost_hash_512 !== data.encrypted_fields_gost_hash_512) {
+        res.status(520).send("потеряна целостность указанной записи");
+        return
+      }
+      res.status(200).json({
+        group_id: data.group_id,
+        label: data.label,
+        login: login_decrypted,
+        password: password_decrypted
+      })
+    }).catch(err => {
+      res.status(500).send("не удалось получить записи для указанной группы");
+    })
+  }).catch(err => {
+    res.status(500).send("не удалось получить группу");
+  })
+})
+
+/* POST create new record for group*/
+router.post('/record/new', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const { record, group } = req.body
+  Group.findById( group._id )
+    .then(data => {
+      if (!data) {
+        console.error("data",data);
+        res.status(404).send("группа не найдена");
+        return
+      }
+      const gost_hash_512 = hashHelper.streebog_512(group.password)
+      if (gost_hash_512 !== data.gost_hash_512) {
+        console.error("gost_hash_512",gost_hash_512);
+        res.status(406).send("неверный пароль для указанной группы");
+        return
+      }
+      console.warn(" new Record", record);
+      const login_encrypted = cipherHelper.kuznechikEncrypt(record.login, group.password)
+      const password_encrypted = cipherHelper.kuznechikEncrypt(record.password, group.password)
+      const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${record.login}${record.password}`)
+      new Record({
+        group_id: data.group_id,
+        label: data.label,
+        login_encrypted,
+        password_encrypted,
+        encrypted_fields_gost_hash_512
+      }).save()
+        .then(data => {
+          console.log(data);
+          res.status(200).json(data)
+        }).catch(error => {
+        console.error(error);
+        res.status(500).send(error)
+      })
+    }).catch(error=>{
+    console.error("error",error)
+    res.status(500).send(error)
+  })
+})
+
+
+
+
+
+
+
+
+
 /*/!* GET all *!/
 router.get('/group/:id', (req, res) => {
   verify(req.headers.authorization, res)
