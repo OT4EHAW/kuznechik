@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     items () {
+      this.loadRecords(null)
       const demoGroups = [
         {
           id: "-2",
