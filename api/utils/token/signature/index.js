@@ -11,6 +11,7 @@ export const signatureHelper = {
       mode: "HMAC",
       type: 'secret',
       usages: 'sign',
+      length: 256,
       buffer: keyBuffer
     }
     const helper = gostEngine.getGostDigest(config)

@@ -27,13 +27,11 @@ const createKey = () => {
   return uuid.v4()
 }
 let SECRET_KEY = createKey();
-
- const tokenHelper = {
-   updateKey: () => {
-     SECRET_KEY = createKey();
-   },
+const ALG_NAME = "HMAC_GOSTR3411_2012_256"
+const tokenHelper = {
+  name: ALG_NAME,
   createAccess: (userId, time) => {
-    const headerJSON = encodeBase64urlToJSON({ alg: "Streebog", typ: "JWT" })
+    const headerJSON = encodeBase64urlToJSON({ alg: ALG_NAME, typ: "JWT" })
     const payloadJSON = encodeBase64urlToJSON({ exp: time, user: userId })
     const signatureStr = `${headerJSON}.${payloadJSON}`
     const signature = signatureHelper.hmac(signatureStr, SECRET_KEY)
@@ -50,7 +48,11 @@ let SECRET_KEY = createKey();
     console.log("user:", payload.user)
 
     return payload.user
-  }
+  },
+   updateKey: () => {
+     SECRET_KEY = createKey();
+   },
+
 }
 
 
