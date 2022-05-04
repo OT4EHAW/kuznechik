@@ -19,7 +19,7 @@
         v-for="(item, index) in items()"
         :active="isActive(item.id)"
         :key="item.id"
-        @click="selectHandler(item.id)"
+        @click="selectHandler(item)"
       >
         {{item.name}}
       </b-nav-item>
@@ -37,10 +37,10 @@ import AddGroupModal from "./AddGroupModal";
 import { mapState } from "vuex";
 
 export default {
-  name: "sidebar",
+  name: "verticalMenu",
   components: {AddGroupModal},
   computed: {
-    ...mapState(["groupId", "groupList"]),
+    ...mapState(["groupId", "groupList", "access_token"]),
   },
   methods: {
     items () {
@@ -84,8 +84,29 @@ export default {
     isActive (key) {
       return this.groupId === key
     },
-    selectHandler (key) {
-      this.$store.commit(GROUP_MUTATIONS.SET_GROUP_ID, key)
+     selectHandler ({id, name}) {
+      this.$store.commit(GROUP_MUTATIONS.SET_GROUP, {id, name})
+       const group_id = id === "-1" ? null : id
+       this.loadRecords(group_id)
+    },
+    async loadRecords (group_id) {
+      if (!this.access_token) {
+        return
+      }
+      this.$axios.get('/api/record', {
+        params: {
+          group_id: group_id
+        }
+      })
+        .then(({ data }) => {
+          console.log(`records ${data.items}`)
+          this.$store.commit(GROUP_MUTATIONS.SET_RECORD_LIST, data.items)
+        })
+        .catch((errorCode) => {
+        })
+        .then(() => {
+
+        })
     },
   }
 }

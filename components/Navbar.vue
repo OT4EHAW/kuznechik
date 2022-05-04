@@ -42,7 +42,7 @@
 
 <script>
 
-import Sidebar from "./vertical-menu";
+import Sidebar from "./verticalMenu";
 import {AUTH_MUTATIONS} from "../store";
 
 export default {

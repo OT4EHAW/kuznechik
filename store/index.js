@@ -13,7 +13,9 @@ export const AUTH_MUTATIONS = {
 export const GROUP_MUTATIONS = {
   SET_GROUP_ID: 'SET_GROUP_ID',
   SET_GROUP_LIST: 'SET_GROUP_LIST',
-  NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST"
+  SET_RECORD_LIST: 'SET_RECORD_LIST',
+  NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST",
+  SET_GROUP: "SET_GROUP"
 }
 
 
@@ -27,7 +29,9 @@ const createStore = () => {
       refresh_token: localStorage.getItem('refresh_token'),
 
       groupId: '-1',
+      groupName: 'Все записи',
       groupList: [],
+      recordList: [],
       needUpdate: false
     },
     mutations: {
@@ -59,12 +63,20 @@ const createStore = () => {
         localStorage.removeItem('email')
         localStorage.removeItem('refresh_token')
       },
+      [GROUP_MUTATIONS.SET_GROUP] (state, {id, name}) {
+        state.groupId = id
+        state.groupName = name
+      },
       // store the logged in user in the state
       [GROUP_MUTATIONS.SET_GROUP_ID] (state, id) {
         state.groupId = id
       },
       [GROUP_MUTATIONS.SET_GROUP_LIST] (state, list) {
         state.groupList = list.slice() || []
+        state.needUpdate = false
+      },
+      [GROUP_MUTATIONS.SET_RECORD_LIST] (state, list) {
+        state.recordList = list.slice() || []
         state.needUpdate = false
       },
       [GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST] (state) {

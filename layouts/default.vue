@@ -7,7 +7,7 @@
 
 <script>
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/vertical-menu";
+import Sidebar from "../components/verticalMenu";
 import {AUTH_MUTATIONS} from "../store";
 import {mapState} from "vuex";
 

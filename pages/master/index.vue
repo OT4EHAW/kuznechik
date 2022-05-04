@@ -2,28 +2,31 @@
   <b-container
     class=" m-0 mt-2">
       <b-row>
-        <b-col  class="flex-grow-0">
-          <sidebar/>
+        <b-col  class="flex-grow-0 w-100">
+          <vertical-menu/>
         </b-col>
-
-        <b-col class="flex-grow-1">
-          Здесь будут добавленные в группу записи
+        <b-col class="flex-grow-1 ">
+         <accordion-list/>
         </b-col>
+<!--        <b-col class="w-25 flex-grow-0">
+          Добавить запись
+        </b-col>-->
       </b-row>
 
   </b-container>
 </template>
 
 <script>
-import Sidebar from "../../components/vertical-menu";
 import {GROUP_MUTATIONS} from "../../store";
 import {mapState} from "vuex";
+import VerticalMenu from "../../components/verticalMenu";
+import AccordionList from "../../components/AccordionList";
 
 export default {
   name: "master",
-  components: {Sidebar},
+  components: {AccordionList, VerticalMenu},
   middleware: 'auth',
-  computed: mapState(["access_token", "needUpdate"]),
+  computed: mapState(["access_token", "needUpdate", "access_token"]),
   watch: {
     access_token () {
       this.loadIGroups()
@@ -51,6 +54,11 @@ export default {
         .then(() => {
 
         })
+    },
+  },
+  data () {
+    return {
+
     }
   }
 }

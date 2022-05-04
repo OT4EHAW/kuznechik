@@ -183,9 +183,21 @@ router.get('/record', (req, res) => {
     res.status(401).send("invalid token...");
     return;
   }
-  const { group_id } = req.body
+  const {group_id}  = req.query
+  console.log("group_id",group_id);
+  if (!group_id) {
+    Record.find().sort({label: 0}).then(data => {
+        res.status(200).json({items: data})
+      }).catch(err => {
+      res.status(500).send("не удалось получить записи для указанной группы");
+    })
+    return;
+  }
   Group.findById(group_id).then(data => {
-    Record.find({group_id: group_id}).sort({label: 0}).then(data => {
+    Record
+      .find({group_id: data._id})
+      .sort({label: 0})
+      .then(data => {
       res.status(200).json({items: data})
     }).catch(err => {
       res.status(500).send("не удалось получить записи для указанной группы");
@@ -240,10 +252,11 @@ router.post('/record/new', (req, res) => {
   Group.findById( group._id )
     .then(data => {
       if (!data) {
-        console.error("data",data);
+        console.error("group",data);
         res.status(404).send("группа не найдена");
         return
       }
+      console.log("group",group);
       const gost_hash_512 = hashHelper.streebog_512(group.password)
       if (gost_hash_512 !== data.gost_hash_512) {
         console.error("gost_hash_512",gost_hash_512);
@@ -253,10 +266,11 @@ router.post('/record/new', (req, res) => {
       console.warn(" new Record", record);
       const login_encrypted = cipherHelper.kuznechikEncrypt(record.login, group.password)
       const password_encrypted = cipherHelper.kuznechikEncrypt(record.password, group.password)
-      const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${record.login}${record.password}`)
+      const encrypted_fields_str = `${record.login}${record.password}`
+      const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(encrypted_fields_str)
       new Record({
-        group_id: data.group_id,
-        label: data.label,
+        group_id: group._id || null,
+        label: record.label,
         login_encrypted,
         password_encrypted,
         encrypted_fields_gost_hash_512

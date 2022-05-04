@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 const recordSchema = new mongoose.Schema({
   group_id: {
     type: String,
-    required: true,
+    required: false,
   },
   label: {
     type: String,
