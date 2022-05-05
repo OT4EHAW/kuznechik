@@ -42,41 +42,23 @@ export default {
   computed: {
     ...mapState(["groupId", "groupList", "access_token"]),
   },
+  data () {
+    return {
+      sumRecord: {
+        id: "-1",
+        name: "Все записи",
+      }
+    }
+  },
   methods: {
     items () {
       const group_id = this.groupId === "-1" ? null : this.groupId
       this.loadRecords(group_id)
-      const demoGroups = [
-        {
-          id: "-2",
-          name: "Работа",
-        },
-        {
-          id: "-3",
-          name: "Вуз",
-        },
-        {
-          id: "-4",
-          name: "Игры",
-        },
-        {
-          id: "-5",
-          name: "Соцсети",
-        },
-      ]
       if (!this.groupList || this.groupList.length === 0) {
-        return [
-          {
-            id: "-1",
-            name: "Все записи",
-          }
-        ]
+        return [ this.sumRecord ]
       }
       return [
-        {
-          id: "-1",
-          name: "Все записи",
-        },
+        this.sumRecord,
         ...this.groupList.map(item=>({
           id: item._id,
           name:  item.name
@@ -86,12 +68,9 @@ export default {
     isActive (key) {
       return this.groupId === key
     },
-     selectHandler ({id, name}) {
-
+    selectHandler ({id, name}) {
       this.$store.commit(GROUP_MUTATIONS.SET_GROUP, {id, name})
-       this.$store.commit(GROUP_MUTATIONS.SET_RECORD_LIST, [])
-
-
+      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_LIST, [])
     },
     async loadRecords (group_id) {
       this.$emit("select")

@@ -92,7 +92,7 @@ export default {
   props:{
     id: {
       type: String,
-      default: null
+      default: "madel-adding-record"
     },
     groupPassword: {
       type: String,
@@ -182,7 +182,6 @@ export default {
         }
       })
         .then(res => {
-          this.$store.commit(GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST)
           this.$toast.success('Вы успешно создали новую запись')
         }).catch(() => {
         this.$toast.error('Не удалось создать запись')

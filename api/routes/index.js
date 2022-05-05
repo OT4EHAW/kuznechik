@@ -208,44 +208,6 @@ router.get('/record', (req, res) => {
   })
 })
 
-/* POST open encrypted record fields*/
-router.post('/record/open', (req, res) => {
-  if (!checkUserToken(req.headers.authorization)) {
-    res.status(401).send("invalid token...");
-    return;
-  }
-  const {group, record_id} = req.body
-  Group.findById(group._id).then(data => {
-    const gost_hash_512 = hashHelper.streebog_512(group.password)
-    if (data.gost_hash_512 !== gost_hash_512) {
-      res.status(406).send("неверный пароль для указанной группы");
-      return
-    }
-    Record.findById(record_id).then(data => {
-      const login_decrypted = cipherHelper.kuznechikDecrypt(data.login_encrypted, group.password)
-      const password_decrypted = cipherHelper.kuznechikDecrypt(data.password_encrypted, group.password)
-      console.error("key",group.password);
-      console.error("login",login_decrypted);
-      console.error("password",password_decrypted);
-      const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${login_decrypted}${password_decrypted}`)
-      if (encrypted_fields_gost_hash_512 !== data.encrypted_fields_gost_hash_512) {
-
-        res.status(520).send("потеряна целостность указанной записи");
-        return
-      }
-      res.status(200).json({
-        group_id: data.group_id,
-        label: data.label,
-        login: login_decrypted,
-        password: password_decrypted
-      })
-    }).catch(err => {
-      res.status(500).send("не удалось получить записи для указанной группы");
-    })
-  }).catch(err => {
-    res.status(500).send("не удалось получить группу");
-  })
-})
 
 /* POST create new record for group*/
 router.post('/record/new', (req, res) => {
@@ -297,7 +259,44 @@ router.post('/record/new', (req, res) => {
 })
 
 
+/* POST open encrypted record fields*/
+router.post('/record/open', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const {group, record_id} = req.body
+  Group.findById(group._id).then(data => {
+    const gost_hash_512 = hashHelper.streebog_512(group.password)
+    if (gost_hash_512 !== data.gost_hash_512) {
+      res.status(406).send("неверный пароль для указанной группы");
+      return
+    }
+    Record.findById(record_id).then(data => {
+      const login_decrypted = cipherHelper.kuznechikDecrypt(data.login_encrypted, group.password)
+      const password_decrypted = cipherHelper.kuznechikDecrypt(data.password_encrypted, group.password)
+      console.error("key",group.password);
+      console.error("login",login_decrypted);
+      console.error("password",password_decrypted);
+      const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${login_decrypted}${password_decrypted}`)
+      if (encrypted_fields_gost_hash_512 !== data.encrypted_fields_gost_hash_512) {
 
+        res.status(520).send("потеряна целостность указанной записи");
+        return
+      }
+      res.status(200).json({
+        group_id: data.group_id,
+        label: data.label,
+        login: login_decrypted,
+        password: password_decrypted
+      })
+    }).catch(err => {
+      res.status(500).send("не удалось получить записи для указанной группы");
+    })
+  }).catch(err => {
+    res.status(500).send("не удалось получить группу");
+  })
+})
 
 
 
