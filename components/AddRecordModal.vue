@@ -182,6 +182,7 @@ export default {
         }
       })
         .then(res => {
+          this.$store.commit(GROUP_MUTATIONS.NEED_UPDATE_RECORD_LIST)
           this.$toast.success('Вы успешно создали новую запись')
         }).catch(() => {
         this.$toast.error('Не удалось создать запись')

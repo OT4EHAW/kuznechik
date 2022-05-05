@@ -16,6 +16,7 @@ export const GROUP_MUTATIONS = {
   SET_GROUP_LIST: 'SET_GROUP_LIST',
   SET_RECORD_LIST: 'SET_RECORD_LIST',
   NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST",
+  NEED_UPDATE_RECORD_LIST: "NEED_UPDATE_RECORD_LIST",
   SET_GROUP: "SET_GROUP"
 }
 
@@ -34,7 +35,8 @@ const createStore = () => {
       groupName: 'Все записи',
       groupList: [],
       recordList: [],
-      needUpdate: false
+      needGroupListUpdate: false,
+      needRecordListUpdate: false
     },
     mutations: {
       // store the logged in user in the state
@@ -80,14 +82,17 @@ const createStore = () => {
       },
       [GROUP_MUTATIONS.SET_GROUP_LIST] (state, list) {
         state.groupList = list.slice() || []
-        state.needUpdate = false
+        state.needGroupListUpdate = false
       },
       [GROUP_MUTATIONS.SET_RECORD_LIST] (state, list) {
         state.recordList = list.slice() || []
-        state.needUpdate = false
+        state.needRecordListUpdate = false
       },
       [GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST] (state) {
-        state.needUpdate = true
+        state.needGroupListUpdate = true
+      },
+      [GROUP_MUTATIONS.NEED_UPDATE_RECORD_LIST] (state) {
+        state.needRecordListUpdate = true
       }
 
     }

@@ -40,7 +40,10 @@ export default {
   name: "verticalMenu",
   components: {AddGroupModal},
   computed: {
-    ...mapState(["groupId", "groupList", "access_token"]),
+    ...mapState(["groupId", "groupList", "access_token", "needRecordListUpdate"]),
+    dbGroupId () {
+      return this.groupId === "-1" ? null : this.groupId
+    }
   },
   data () {
     return {
@@ -50,10 +53,14 @@ export default {
       }
     }
   },
+  watch: {
+    needRecordListUpdate () {
+      this.loadRecords()
+    }
+  },
   methods: {
     items () {
-      const group_id = this.groupId === "-1" ? null : this.groupId
-      this.loadRecords(group_id)
+      this.loadRecords()
       if (!this.groupList || this.groupList.length === 0) {
         return [ this.sumRecord ]
       }
@@ -72,7 +79,8 @@ export default {
       this.$store.commit(GROUP_MUTATIONS.SET_GROUP, {id, name})
       this.$store.commit(GROUP_MUTATIONS.SET_RECORD_LIST, [])
     },
-    async loadRecords (group_id) {
+    async loadRecords () {
+      const group_id = this.dbGroupId
       this.$emit("select")
       if (!this.access_token) {
         return

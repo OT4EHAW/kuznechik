@@ -26,12 +26,12 @@ export default {
   name: "master",
   components: {AccordionList, VerticalMenu},
   middleware: 'auth',
-  computed: mapState(["access_token", "needUpdate", "access_token"]),
+  computed: mapState(["access_token", "needGroupListUpdate", "access_token"]),
   watch: {
     access_token () {
       this.loadIGroups()
     },
-    needUpdate () {
+    needGroupListUpdate () {
       this.loadIGroups()
     }
   },
