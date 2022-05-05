@@ -1,5 +1,5 @@
 <template>
-  <div class="accordion" role="tablist">
+  <div v-if="isLoaded" class="accordion" role="tablist">
 
     <!--   модальные окна   -->
 
@@ -115,7 +115,10 @@ export default {
   name: "AccordionList",
   components: {GroupPasswordModal, AddRecordModal },
   props: {
-
+    isLoaded: {
+      type: Boolean,
+      default: true
+    }
   },
   computed: {
     ...mapState(["groupId", "groupName", "recordList", "groupList", "recordId"]),
@@ -180,13 +183,12 @@ export default {
       })
     },
     isSubmit (value) {
-      if (!value) {
-        this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
-        this.groupPassword = null
-        this.openedRecordId = null
+      if (value) {
         return
       }
-      this.openedRecordId = this.recordId
+      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
+      this.groupPassword = null
+      this.openedRecordId = null
     }
   },
   methods: {
@@ -194,6 +196,7 @@ export default {
       return this.groupId + recordId
     },
     itemClickHandler (openedRecordId) {
+      this.openedRecordId = openedRecordId
       this.groupPassword = null
       this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, openedRecordId)
       this.isSubmit2 = false

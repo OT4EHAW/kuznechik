@@ -44,7 +44,8 @@ export default {
   },
   methods: {
     items () {
-      this.loadRecords(null)
+      const group_id = this.groupId === "-1" ? null : this.groupId
+      this.loadRecords(group_id)
       const demoGroups = [
         {
           id: "-2",
@@ -86,14 +87,18 @@ export default {
       return this.groupId === key
     },
      selectHandler ({id, name}) {
+
       this.$store.commit(GROUP_MUTATIONS.SET_GROUP, {id, name})
-       const group_id = id === "-1" ? null : id
-       this.loadRecords(group_id)
+       this.$store.commit(GROUP_MUTATIONS.SET_RECORD_LIST, [])
+
+
     },
     async loadRecords (group_id) {
+      this.$emit("select")
       if (!this.access_token) {
         return
       }
+
       this.$axios.get('/api/record', {
         params: {
           group_id: group_id
@@ -106,7 +111,7 @@ export default {
         .catch((errorCode) => {
         })
         .then(() => {
-
+          this.$emit("loaded")
         })
     },
   }

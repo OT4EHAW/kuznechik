@@ -68,6 +68,7 @@ const createStore = () => {
       [GROUP_MUTATIONS.SET_GROUP] (state, {id, name}) {
         state.groupId = id
         state.groupName = name
+        console.log("GROUP NAME",name)
       },
       // store the logged in user in the state
       [GROUP_MUTATIONS.SET_GROUP_ID] (state, id) {

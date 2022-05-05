@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 /*testingHASH()
 testingHMAC()
 testingKuznechik()*/
-
+testingKuznechik()
 dbConnection()
 
 module.exports = app

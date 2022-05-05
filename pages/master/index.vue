@@ -3,10 +3,10 @@
     class=" m-0 mt-2">
       <b-row>
         <b-col  class="flex-grow-0 w-100">
-          <vertical-menu/>
+          <vertical-menu @select="handleSelect"  @loaded="handleLoaded"/>
         </b-col>
         <b-col class="flex-grow-1 ">
-         <accordion-list/>
+         <accordion-list :isLoaded="isLoadedSelectedGroup"/>
         </b-col>
 <!--        <b-col class="w-25 flex-grow-0">
           Добавить запись
@@ -39,6 +39,12 @@ export default {
     this.loadIGroups()
   },
   methods: {
+    handleSelect () {
+     this.isLoadedSelectedGroup = false
+    },
+    handleLoaded () {
+      this.isLoadedSelectedGroup = true
+    },
     async loadIGroups () {
       if (!this.access_token) {
         return
@@ -58,7 +64,7 @@ export default {
   },
   data () {
     return {
-
+      isLoadedSelectedGroup: false
     }
   }
 }

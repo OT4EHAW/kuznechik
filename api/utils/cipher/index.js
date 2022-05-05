@@ -15,13 +15,13 @@ export const cipherHelper = {
   name: "CTR",
   kuznechikEncrypt: (targetStr, keyStr) => {
     const helper = buildCryptoHelper(keyStr)
-    let targetBuffer = Buffer.from(targetStr);
-    let encryptedBuffer = helper.Encrypt(targetBuffer);
+    const targetBuffer = Buffer.from(targetStr);
+    const encryptedBuffer = helper.Encrypt(targetBuffer);
     return encryptedBuffer
   },
   kuznechikDecrypt: (encryptedBuffer, keyStr) => {
     const helper = buildCryptoHelper(keyStr)
-    let decryptedBuffer = helper.Decrypt(encryptedBuffer);
+    const decryptedBuffer = helper.Decrypt(encryptedBuffer);
     return decryptedBuffer.toString('utf-8')
   }
 }
