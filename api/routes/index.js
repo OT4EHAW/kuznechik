@@ -198,6 +198,7 @@ router.get('/record', (req, res) => {
       .find({group_id: data._id})
       .sort({label: 0})
       .then(data => {
+        console.log(data.length)
       res.status(200).json({items: data})
     }).catch(err => {
       res.status(500).send("не удалось получить записи для указанной группы");
@@ -223,8 +224,12 @@ router.post('/record/open', (req, res) => {
     Record.findById(record_id).then(data => {
       const login_decrypted = cipherHelper.kuznechikDecrypt(data.login_encrypted, group.password)
       const password_decrypted = cipherHelper.kuznechikDecrypt(data.password_encrypted, group.password)
+      console.error("key",group.password);
+      console.error("login",login_decrypted);
+      console.error("password",password_decrypted);
       const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${login_decrypted}${password_decrypted}`)
       if (encrypted_fields_gost_hash_512 !== data.encrypted_fields_gost_hash_512) {
+
         res.status(520).send("потеряна целостность указанной записи");
         return
       }
@@ -263,7 +268,10 @@ router.post('/record/new', (req, res) => {
         res.status(406).send("неверный пароль для указанной группы");
         return
       }
-      console.warn(" new Record", record);
+      console.warn("new Record", record);
+      console.error("key",group.password);
+      console.error("login",record.login);
+      console.error("password",record.password);
       const login_encrypted = cipherHelper.kuznechikEncrypt(record.login, group.password)
       const password_encrypted = cipherHelper.kuznechikEncrypt(record.password, group.password)
       const encrypted_fields_str = `${record.login}${record.password}`

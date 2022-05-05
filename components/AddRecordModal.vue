@@ -98,14 +98,14 @@ export default {
       type: String,
       default: null
     },
-   /* isShow: {
+    /*isShow: {
       type: Boolean,
       default: false
     }*/
   },
 /*watch: {
     isShow (value) {
-      this.show = this.show || value
+      this.show = value
     }
 },*/
   data() {

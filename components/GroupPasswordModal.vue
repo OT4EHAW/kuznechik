@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import {GROUP_MUTATIONS} from "../store";
 import {mapState} from "vuex";
 import AddRecordModal from "./AddRecordModal";
 
@@ -53,6 +52,10 @@ export default {
     id: {
       type: String,
       default: "modal-adding-group"
+    },
+    groupName: {
+      type: String,
+      default: ""
     },
   },
   data() {
@@ -67,7 +70,6 @@ export default {
     passValidation () {
       return this.passFeedbackString()
     },
-    ...mapState(["groupId", "groupName"]),
   },
   methods: {
     resetModal() {

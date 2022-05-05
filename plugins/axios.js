@@ -25,7 +25,7 @@ export default function ({ $axios, $toast, store, redirect }) {
       case 406: msg = 'Неверный пароль'; break
       case 409: msg = 'Имя должно быть уникальным'; break
       case 500: msg = 'На сервере возникла ошибка'; break
-      case 520: msg = 'Не удалось сформировать токен'; break
+      case 520: msg = 'Ошибка в шифровании'; break
     }
     $toast.error(msg)
     console.error(msg, error.response.data)

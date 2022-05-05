@@ -1,60 +1,108 @@
 <template>
   <div class="accordion" role="tablist">
+
+    <!--   модальные окна   -->
+
+    <group-password-modal
+      :id="groupPasswordModalId"
+      @submit="passwordSubmit"
+      :group-name="modalGroup.name"
+    />
+    <group-password-modal
+      :id="groupPasswordModal2Id"
+      @submit="passwordSubmit2"
+      :group-name="modalGroup.name"
+    />
+    <add-record-modal
+      v-if="isSubmit"
+      id="modal-adding-record"
+      :group-id="modalGroup.id"
+      :group-password="groupPassword"
+      @close="finishSubmit"
+    />
+
+
     <b-card
       header-tag="header"
       footer-tag="footer"
       sub-title-tag="sub-title"
       :sub-title="`Количество записей: ${recordList.length}`"
     >
+
+      <!--   шапка с названием группы и кнопкой создания записи   -->
+
       <template #header>
           <b-row class="align-items-center">
             <b-col class="flex-grow-1">
               <h4> {{ groupName }}</h4>
             </b-col>
+            <!--   создавить записи нельзя в разделе "Все записи" (id = "-1")  -->
             <b-col class="flex-grow-0 ">
-              <b-button v-if="groupId != '-1'" size="lg" variant="light" class="mb-2"
-                        v-b-modal="isSubmit ? 'modal-adding-record' : 'modal-check-group-password'"
-
+              <b-button
+                v-if="groupId !== '-1'"
+                v-b-modal="groupPasswordModalId"
+                size="lg"
+                variant="light"
+                class="mb-2"
               >
-                <b-icon icon="plus-square" font-scale="1.5" aria-label="Help" variant="primary"></b-icon>
+                <b-icon
+                  icon="plus-square"
+                  font-scale="1.5"
+                  aria-label="Help"
+                  variant="primary"
+                />
               </b-button>
-              <group-password-modal
-                id="modal-check-group-password"
-                @submit="passwordSubmit">
-              </group-password-modal>
-              <add-record-modal
-                v-if="isSubmit"
-                id="modal-adding-record"
-                :group_id="groupId"
-                :group-password="groupPassword"
-                @close="finishSubmit"
-              />
             </b-col>
           </b-row>
       </template>
 
       <!--  список записей    -->
+
       <b-list-group scrollable >
-        <b-list-group-item v-for="item in recordList" :key="item._id" class="p-0 border-0">
+        <b-list-group-item v-for="item in recordList" :key="'list-item-'+groupItemId(item._id)" class="p-0 border-0">
           <b-card no-body class="mb-1" >
+
+            <!--  название записи  -->
+
             <b-card-header header-tag="header" class="p-1" role="tab">
-              <b-button block v-b-toggle="item._id" variant="light">{{ item.label }}</b-button>
+              <b-button
+                block
+                variant="light"
+                @click="itemClickHandler(item._id)"
+                v-b-modal="openRecordModalId"
+                v-b-toggle="groupItemId(item._id)"
+              >
+                {{ item.label }}
+              </b-button>
             </b-card-header>
-            <b-collapse :id="item._id" :visible="false" accordion="my-accordion" role="tabpanel">
+
+            <!--  расшифрованные логин и пароль  -->
+
+            <b-collapse
+              v-if="isSubmit2"
+              :id="groupItemId(item._id)"
+              :visible="true"
+              accordion="my-accordion"
+              role="tabpanel"
+            >
               <b-card-body>
-                <b-card-text>Логин: {{ item.login }}</b-card-text>
-                <b-card-text>Пароль: {{ item.password }}</b-card-text>
+                <b-card-text>Логин: {{ login }}</b-card-text>
+                <b-card-text>Пароль: {{ password }}</b-card-text>
               </b-card-body>
             </b-collapse>
+
           </b-card>
         </b-list-group-item>
       </b-list-group>
 
+      <!--  доп. иныормация    -->
 
       <template #footer>
         <em>Все записи защищены шифрованием. Просмотр доступен после ввода пароля от группы.</em>
       </template>
+
     </b-card>
+
   </div>
 </template>
 
@@ -62,6 +110,7 @@
 import AddRecordModal from "./AddRecordModal";
 import {mapState} from "vuex";
 import GroupPasswordModal from "./GroupPasswordModal";
+import {GROUP_MUTATIONS} from "../store";
 export default {
   name: "AccordionList",
   components: {GroupPasswordModal, AddRecordModal },
@@ -69,20 +118,106 @@ export default {
 
   },
   computed: {
-    ...mapState(["groupId", "groupName", "recordList"]),
+    ...mapState(["groupId", "groupName", "recordList", "groupList", "recordId"]),
+
+    groupPasswordModalId (){
+     return  this.groupId + "-modal-check-group-password"
+    },
+    groupPasswordModal2Id (){
+      return  this.groupId+"-modal-check-group-password-record"
+    },
+    openRecordModalId (){
+      return  this.isSubmit2 ? null : this.groupPasswordModal2Id
+    },
+    modalGroup () {
+      const allGroupsObject = {
+        id: this.groupId,
+        name: this.groupName
+      }
+      if (!this.recordId || this.recordList.length === 0) {
+        return allGroupsObject
+      }
+      const record = this.recordList.find(record=>record._id===this.recordId)
+      if (!record) {
+        console.error("record not found")
+        return allGroupsObject;
+      }
+      const group = this.groupList.find(group=>group._id===record.group_id)
+      return group || allGroupsObject
+    },
   },
   data() {
     return {
       isSubmit: false,
+      isSubmit2: false,
       groupPassword: null,
+      openedRecordId: null,
+      login:null,
+      password: null
+    }
+  },
+  watch: {
+    groupPassword (value) {
+      const recordId = this.openedRecordId
+      const groupId = this.modalGroup?._id
+      if (!groupId || !recordId || !value) {
+        return;
+      }
+      this.$axios.post('/api/record/open', {
+        record_id: recordId,
+        group: {
+          _id: groupId,
+          password: value
+        }
+      })
+        .then(res => {
+          this.login = res.data.login
+          this.password = res.data.password
+          this.isSubmit2 = true
+          //this.$toast.success('Вы успешно создали новую запись')
+        }).catch(() => {
+
+      })
+    },
+    isSubmit (value) {
+      if (!value) {
+        this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
+        this.groupPassword = null
+        this.openedRecordId = null
+        return
+      }
+      this.openedRecordId = this.recordId
     }
   },
   methods: {
+    groupItemId (recordId) {
+      return this.groupId + recordId
+    },
+    itemClickHandler (openedRecordId) {
+      this.groupPassword = null
+      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, openedRecordId)
+      this.isSubmit2 = false
+     /* if (!this.isSubmit2) {
+        this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, openedRecordId)
+        this.openedRecordId = openedRecordId
+        return
+      }
+      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
+      this.isSubmit2 = false
+      this.groupPassword = null
+      if (this.openedRecordId === openedRecordId) {
+        this.openedRecordId = null
+      }
+      this.openedRecordId = openedRecordId*/
+    },
     finishSubmit () {
       this.isSubmit = false
     },
     passwordSubmit (groupPassword) {
       this.isSubmit = true
+      this.groupPassword = groupPassword
+    },
+    passwordSubmit2 (groupPassword) {
       this.groupPassword = groupPassword
     }
   }

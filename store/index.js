@@ -12,6 +12,7 @@ export const AUTH_MUTATIONS = {
 // reusable aliases for mutations
 export const GROUP_MUTATIONS = {
   SET_GROUP_ID: 'SET_GROUP_ID',
+  SET_RECORD_ID: 'SET_RECORD_ID',
   SET_GROUP_LIST: 'SET_GROUP_LIST',
   SET_RECORD_LIST: 'SET_RECORD_LIST',
   NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST",
@@ -29,6 +30,7 @@ const createStore = () => {
       refresh_token: localStorage.getItem('refresh_token'),
 
       groupId: '-1',
+      recordId: null,
       groupName: 'Все записи',
       groupList: [],
       recordList: [],
@@ -70,6 +72,10 @@ const createStore = () => {
       // store the logged in user in the state
       [GROUP_MUTATIONS.SET_GROUP_ID] (state, id) {
         state.groupId = id
+      },
+
+      [GROUP_MUTATIONS.SET_RECORD_ID] (state, id) {
+        state.recordId = id
       },
       [GROUP_MUTATIONS.SET_GROUP_LIST] (state, list) {
         state.groupList = list.slice() || []
