@@ -17,11 +17,11 @@ export const cipherHelper = {
     const helper = buildCryptoHelper(keyStr)
     const targetBuffer = Buffer.from(targetStr);
     const encryptedBuffer = helper.Encrypt(targetBuffer);
-    return encryptedBuffer
+    return encryptedBuffer.toString("hex")
   },
-  kuznechikDecrypt: (encryptedBuffer, keyStr) => {
+  kuznechikDecrypt: (encryptedStr, keyStr) => {
     const helper = buildCryptoHelper(keyStr)
-    const decryptedBuffer = helper.Decrypt(encryptedBuffer);
+    const decryptedBuffer = helper.Decrypt(Buffer.from(encryptedStr, "hex"));
     return decryptedBuffer.toString('utf-8')
   }
 }

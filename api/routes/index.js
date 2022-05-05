@@ -224,20 +224,24 @@ router.post('/record/new', (req, res) => {
         return
       }
       console.log("group",group);
+
       const gost_hash_512 = hashHelper.streebog_512(group.password)
       if (gost_hash_512 !== data.gost_hash_512) {
         console.error("gost_hash_512",gost_hash_512);
         res.status(406).send("неверный пароль для указанной группы");
         return
       }
+
       console.warn("new Record", record);
       console.error("key",group.password);
-      console.error("login",record.login);
-      console.error("password",record.password);
       const login_encrypted = cipherHelper.kuznechikEncrypt(record.login, group.password)
       const password_encrypted = cipherHelper.kuznechikEncrypt(record.password, group.password)
+      console.error("login_encrypted",login_encrypted);
+      console.error("password_encrypted",password_encrypted);
+
       const encrypted_fields_str = `${record.login}${record.password}`
       const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(encrypted_fields_str)
+
       new Record({
         group_id: group._id || null,
         label: record.label,
@@ -273,9 +277,12 @@ router.post('/record/open', (req, res) => {
       return
     }
     Record.findById(record_id).then(data => {
+      console.error("login_encrypted",data.login_encrypted);
+      console.error("password_encrypted",data.password_encrypted);
+      console.error("key",group.password);
+
       const login_decrypted = cipherHelper.kuznechikDecrypt(data.login_encrypted, group.password)
       const password_decrypted = cipherHelper.kuznechikDecrypt(data.password_encrypted, group.password)
-      console.error("key",group.password);
       console.error("login",login_decrypted);
       console.error("password",password_decrypted);
       const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(`${login_decrypted}${password_decrypted}`)

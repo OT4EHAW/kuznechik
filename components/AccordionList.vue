@@ -27,6 +27,7 @@
       footer-tag="footer"
       sub-title-tag="sub-title"
       :sub-title="`Количество записей: ${recordList.length}`"
+      class="position-sticky"
     >
 
       <!--   шапка с названием группы и кнопкой создания записи   -->
@@ -78,7 +79,7 @@
             <!--  расшифрованные логин и пароль  -->
 
             <b-collapse
-              v-if="isSubmit2"
+              v-if="isSubmit2 && item._id === openedRecordId"
               :id="groupItemId(item._id)"
               :visible="true"
               accordion="my-accordion"
