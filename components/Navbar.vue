@@ -1,6 +1,12 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="primary" fixed>
+    <b-navbar
+      fixed="top"
+      toggleable="lg"
+      type="dark"
+      variant="primary"
+
+    >
       <b-button
         v-b-toggle.vertical-nav-collapse
         variant="primary"
