@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isLoaded" class="accordion" role="tablist">
+  <div  class="accordion" role="tablist">
 
     <!--   модальные окна   -->
 
@@ -33,7 +33,7 @@
 
       <template #header>
           <b-row class="align-items-center">
-            <b-col class="flex-grow-1">
+            <b-col class="flex-grow-1 mr-2">
               <h4> {{ groupName }}</h4>
             </b-col>
             <!--   создавить записи нельзя в разделе "Все записи" (id = "-1")  -->
@@ -43,7 +43,6 @@
                 v-b-modal="groupPasswordModalId"
                 size="lg"
                 variant="light"
-                class="mb-2"
               >
                 <b-icon
                   icon="plus-square"
@@ -58,7 +57,7 @@
 
       <!--  список записей    -->
 
-      <b-list-group scrollable >
+      <b-list-group v-if="isLoaded" scrollable class="records">
         <b-list-group-item v-for="item in recordList" :key="'list-item-'+groupItemId(item._id)" class="p-0 border-0">
           <b-card no-body class="mb-1" >
 
@@ -228,5 +227,11 @@ export default {
 </script>
 
 <style scoped>
-
+.records {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  max-height: 60vh;
+  min-width: 300px;
+  overflow: auto;
+}
 </style>

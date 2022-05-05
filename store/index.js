@@ -59,13 +59,19 @@ const createStore = () => {
 
       // clear our the state, essentially logging out the user
       [AUTH_MUTATIONS.LOGOUT] (state) {
-        state.isAuth = false
         state.id = null
         state.email = null
         state.access_token = null
         state.refresh_token = null
         localStorage.removeItem('email')
         localStorage.removeItem('refresh_token')
+        state.groupId='-1'
+          state. recordId= null
+          state.groupName= 'Все записи'
+          state.groupList= []
+          state.recordList= []
+          state.needGroupListUpdate= false
+          state.needRecordListUpdate= false
       },
       [GROUP_MUTATIONS.SET_GROUP] (state, {id, name}) {
         state.groupId = id

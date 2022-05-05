@@ -38,7 +38,7 @@ export default {
     'bootstrap-vue/nuxt', '@nuxtjs/axios', '@nuxtjs/toast'
   ],
   toast: {
-    position: 'bottom-center',
+    position: 'bottom-left',
     duration: 3000
   },
 

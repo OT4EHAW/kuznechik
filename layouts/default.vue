@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="d-block h-100 overflow-hidden" >
     <navbar></navbar>
-    <nuxt/>
+     <nuxt/>
   </div>
 </template>
 
@@ -76,3 +76,8 @@ export default {
 
 }
 </script>
+<style>
+body {
+  min-width: 360px;
+}
+</style>

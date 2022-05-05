@@ -1,11 +1,10 @@
 <template>
-  <b-container
-    class=" m-0 mt-2">
-      <b-row>
-        <b-col  class="flex-grow-0 w-100">
+  <b-container class=" m-0 mt-2 w-100">
+      <b-row class="d-flex">
+        <b-col  class="">
           <vertical-menu @select="handleSelect"  @loaded="handleLoaded"/>
         </b-col>
-        <b-col class="flex-grow-1 ">
+        <b-col class="flex-grow-1" >
          <accordion-list :isLoaded="isLoadedSelectedGroup"/>
         </b-col>
 <!--        <b-col class="w-25 flex-grow-0">
@@ -53,7 +52,7 @@ export default {
         .then(({ data }) => {
           console.log(`groups ${data.items}`)
           this.$store.commit(GROUP_MUTATIONS.SET_GROUP_LIST, data.items)
-          this.$store.commit(GROUP_MUTATIONS.SET_GROUP_ID, "-1")
+
         })
         .catch((errorCode) => {
         })
@@ -71,5 +70,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

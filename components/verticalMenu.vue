@@ -1,5 +1,6 @@
 <template>
   <b-collapse visible id="vertical-nav-collapse" >
+    <div class="position-fixed">
     <b-dropdown variant="light" class="mb-4">
       <template #button-content>
         <b-icon icon="journals" aria-hidden="true" class="mr-1"></b-icon> Группы
@@ -24,11 +25,8 @@
         {{item.name}}
       </b-nav-item>
     </b-nav>
-
+    </div>
   </b-collapse>
-
-
-
 </template>
 
 <script>
@@ -54,16 +52,19 @@ export default {
     }
   },
   watch: {
-    needRecordListUpdate () {
+    needRecordListUpdate (value) {
+      if (!value) {
+        return
+      }
       this.loadRecords()
     }
   },
   methods: {
     items () {
-      this.loadRecords()
       if (!this.groupList || this.groupList.length === 0) {
         return [ this.sumRecord ]
       }
+      this.loadRecords()
       return [
         this.sumRecord,
         ...this.groupList.map(item=>({

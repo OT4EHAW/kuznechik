@@ -1,21 +1,21 @@
 <template>
   <div>
     <b-navbar
-      fixed="top"
+
       toggleable="lg"
       type="dark"
       variant="primary"
 
     >
-      <b-button
+<!--      <b-button
         v-b-toggle.vertical-nav-collapse
         variant="primary"
         type="icon"
         class="mr-3"
-      >
 
-        <b-icon icon="list" ></b-icon>
-      </b-button>
+      >
+        <b-icon size="lg" icon="list" ></b-icon>
+      </b-button>-->
       <b-navbar-brand to="/" class="mr-md-3 title">
         Менеджер паролей
       </b-navbar-brand>
