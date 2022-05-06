@@ -3,15 +3,13 @@ import express from "express"
 import Account from "../models/Account"
 import Group from "../models/Group"
 import Record from "../models/Record"
-import { checkUserToken, createUserToken, updateUserToken } from "../utils/token";
-import { hashHelper } from "../utils/hash";
 import tokenHelper from "../utils/token/helper";
-import {cipherHelper} from "../utils/cipher";
+import { hashHelper } from "../utils/hash";
+import { cipherHelper } from "../utils/cipher";
+import { checkUserToken, createUserToken, updateUserToken } from "../utils/token";
 
 
 const router = express.Router()
-
-
 
 /**
  * ACCOUNT - профиль пользователя для аутентификации
@@ -166,6 +164,34 @@ router.post('/group/new', (req, res) => {
         console.error(error);
         res.status(500).send(error)
       })
+    }).catch(error=>{
+    console.error("error",error)
+    res.status(500).send(error)
+  })
+})
+
+/* POST create new record for group*/
+router.post('/group/verify', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const { group } = req.body
+  Group.findById( group._id )
+    .then(data => {
+      if (!data) {
+        console.error("group",data);
+        res.status(404).send("группа не найдена");
+        return
+      }
+      console.log("group",group);
+      const gost_hash_512 = hashHelper.streebog_512(group.password)
+      if (gost_hash_512 !== data.gost_hash_512) {
+        console.error("gost_hash_512",gost_hash_512);
+        res.status(406).send("неверный пароль для указанной группы");
+        return
+      }
+      res.status(200).json(data)
     }).catch(error=>{
     console.error("error",error)
     res.status(500).send(error)

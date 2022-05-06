@@ -30,7 +30,7 @@
       class="position-sticky"
     >
 
-      <!--   шапка с названием группы и кнопкой создания записи   -->
+      <!--   шапка с названием группы и кнопкой для создания записи   -->
 
       <template #header>
           <b-row class="align-items-center">
@@ -68,9 +68,9 @@
               <b-button
                 block
                 variant="light"
-                @click="itemClickHandler(item._id)"
                 v-b-modal="openRecordModalId"
                 v-b-toggle="groupItemId(item._id)"
+                @click="itemClickHandler(item._id)"
               >
                 {{ item.label }}
               </b-button>
@@ -80,8 +80,8 @@
 
             <b-collapse
               v-if="isSubmit2 && item._id === openedRecordId"
-              :id="groupItemId(item._id)"
               :visible="true"
+              :id="groupItemId(item._id)"
               accordion="my-accordion"
               role="tabpanel"
             >
@@ -130,7 +130,7 @@ export default {
       return  this.groupId+"-modal-check-group-password-record"
     },
     openRecordModalId (){
-      return  this.isSubmit2 ? null : this.groupPasswordModal2Id
+      return this.groupPasswordModal2Id
     },
     modalGroup () {
       const allGroupsObject = {
@@ -148,16 +148,6 @@ export default {
       const group = this.groupList.find(group=>group._id===record.group_id)
       return group || allGroupsObject
     },
-  },
-  data() {
-    return {
-      isSubmit: false,
-      isSubmit2: false,
-      groupPassword: null,
-      openedRecordId: null,
-      login:null,
-      password: null
-    }
   },
   watch: {
     groupPassword (value) {
@@ -177,7 +167,8 @@ export default {
           this.login = res.data.login
           this.password = res.data.password
           this.isSubmit2 = true
-          //this.$toast.success('Вы успешно создали новую запись')
+          this.$root.$emit('bv::show::collapse', this.groupItemId(this.openedRecordId))
+
         }).catch(() => {
 
       })
@@ -200,30 +191,40 @@ export default {
       this.groupPassword = null
       this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, openedRecordId)
       this.isSubmit2 = false
-     /* if (!this.isSubmit2) {
-        this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, openedRecordId)
-        this.openedRecordId = openedRecordId
-        return
-      }
-      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
-      this.isSubmit2 = false
-      this.groupPassword = null
-      if (this.openedRecordId === openedRecordId) {
-        this.openedRecordId = null
-      }
-      this.openedRecordId = openedRecordId*/
     },
     finishSubmit () {
       this.isSubmit = false
     },
     passwordSubmit (groupPassword) {
-      this.isSubmit = true
-      this.groupPassword = groupPassword
+      this.$axios.post('/api/group/verify', {
+        group: {
+          _id: this.modalGroup.id,
+          password: groupPassword
+        }
+      })
+        .then(res => {
+          this.isSubmit = true
+          this.groupPassword = groupPassword
+          this.$toast.success('Вы можете создать запись в группе ' + res.data.name)
+        }).catch(() => {
+
+      })
+
     },
     passwordSubmit2 (groupPassword) {
       this.groupPassword = groupPassword
     }
-  }
+  },
+  data() {
+    return {
+      isSubmit: false,
+      isSubmit2: false,
+      groupPassword: null,
+      openedRecordId: null,
+      login:null,
+      password: null
+    }
+  },
 }
 </script>
 
