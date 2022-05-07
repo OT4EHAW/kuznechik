@@ -1,5 +1,5 @@
 <template>
-  <div  class="accordion" role="tablist">
+  <div  class="accordion" role="tablist" v-if="isLoaded">
 
     <!--   модальные окна   -->
 
@@ -58,7 +58,7 @@
 
       <!--  список записей    -->
 
-      <b-list-group v-if="isLoaded" scrollable class="records">
+      <b-list-group  scrollable class="records">
         <b-list-group-item v-for="item in recordList" :key="'list-item-'+groupItemId(item._id)" class="p-0 border-0">
           <b-card no-body class="mb-1" >
 
