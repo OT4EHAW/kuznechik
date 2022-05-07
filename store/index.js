@@ -15,9 +15,11 @@ export const GROUP_MUTATIONS = {
   SET_RECORD_ID: 'SET_RECORD_ID',
   SET_GROUP_LIST: 'SET_GROUP_LIST',
   SET_RECORD_LIST: 'SET_RECORD_LIST',
+  ADD_RECORD_LIST: 'ADD_RECORD_LIST',
   NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST",
   NEED_UPDATE_RECORD_LIST: "NEED_UPDATE_RECORD_LIST",
-  SET_GROUP: "SET_GROUP"
+  SET_GROUP: "SET_GROUP",
+  NEED_UPDATE_RECORD: "NEED_UPDATE_RECORD"
 }
 
 
@@ -36,7 +38,8 @@ const createStore = () => {
       groupList: [],
       recordList: [],
       needGroupListUpdate: false,
-      needRecordListUpdate: false
+      needRecordListUpdate: false,
+      needRecordUpdate: false
     },
     mutations: {
       // store the logged in user in the state
@@ -90,6 +93,10 @@ const createStore = () => {
         state.groupList = list.slice() || []
         state.needGroupListUpdate = false
       },
+      [GROUP_MUTATIONS.ADD_RECORD_LIST] (state, list) {
+        state.recordList = [...state.recordList, ...list]
+        state.needRecordListUpdate = false
+      },
       [GROUP_MUTATIONS.SET_RECORD_LIST] (state, list) {
         state.recordList = list.slice() || []
         state.needRecordListUpdate = false
@@ -99,6 +106,9 @@ const createStore = () => {
       },
       [GROUP_MUTATIONS.NEED_UPDATE_RECORD_LIST] (state) {
         state.needRecordListUpdate = true
+      },
+      [GROUP_MUTATIONS.NEED_UPDATE_RECORD] (state) {
+        state.needRecordUpdate = true
       }
 
     }

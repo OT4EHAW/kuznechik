@@ -21,7 +21,7 @@ export default function ({ $axios, $toast, store, redirect }) {
     }
     switch (code) {
       case 401: msg = 'Ошибка авторизации'; break
-      case 404: msg = 'Пользователь не найден'; break
+      case 404: msg = 'Не найдено'; break
       case 406: msg = 'Неверный пароль'; break
       case 409: msg = 'Имя должно быть уникальным'; break
       case 500: msg = 'На сервере возникла ошибка'; break

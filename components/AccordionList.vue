@@ -16,7 +16,7 @@
     <add-record-modal
       v-if="isSubmit"
       id="modal-adding-record"
-      :group-id="modalGroup.id"
+      :group-id="modalGroup._id"
       :group-password="groupPassword"
       @close="finishSubmit"
     />
@@ -68,7 +68,7 @@
               <b-button
                 block
                 variant="light"
-                v-b-modal="openRecordModalId"
+                v-b-modal="openRecordModalId(item._id)"
                 v-b-toggle="groupItemId(item._id)"
                 @click="itemClickHandler(item._id)"
               >
@@ -86,8 +86,15 @@
               role="tabpanel"
             >
               <b-card-body>
-                <b-card-text>Логин: {{ login }}</b-card-text>
-                <b-card-text>Пароль: {{ password }}</b-card-text>
+               <record-form
+                 :id="item._id"
+                 :login="login"
+                 :password="password"
+                 :group="{
+                   id: modalGroup._id,
+                   password: groupPassword
+                 }"
+               />
               </b-card-body>
             </b-collapse>
 
@@ -111,9 +118,10 @@ import AddRecordModal from "./AddRecordModal";
 import {mapState} from "vuex";
 import GroupPasswordModal from "./GroupPasswordModal";
 import {GROUP_MUTATIONS} from "../store";
+import RecordForm from "./RecordForm";
 export default {
   name: "AccordionList",
-  components: {GroupPasswordModal, AddRecordModal },
+  components: {RecordForm, GroupPasswordModal, AddRecordModal },
   props: {
     isLoaded: {
       type: Boolean,
@@ -121,7 +129,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["groupId", "groupName", "recordList", "groupList", "recordId"]),
+    ...mapState(["groupId", "groupName", "recordList", "groupList", "recordId", "needRecordUpdate"]),
 
     groupPasswordModalId (){
      return  this.groupId + "-modal-check-group-password"
@@ -129,12 +137,10 @@ export default {
     groupPasswordModal2Id (){
       return  this.groupId+"-modal-check-group-password-record"
     },
-    openRecordModalId (){
-      return this.groupPasswordModal2Id
-    },
+
     modalGroup () {
       const allGroupsObject = {
-        id: this.groupId,
+        _id: this.groupId,
         name: this.groupName
       }
       if (!this.recordId || this.recordList.length === 0) {
@@ -150,17 +156,39 @@ export default {
     },
   },
   watch: {
+
+    needRecordUpdate () {
+      this.loadRecord(this.groupPassword)
+    },
     groupPassword (value) {
+      this.loadRecord(value)
+    },
+    isSubmit (value) {
+      if (value) {
+        return
+      }
+      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
+      this.groupPassword = null
+      this.openedRecordId = null
+    }
+  },
+  methods: {
+    openRecordModalId (recordId){
+      return this.openedRecordId === recordId
+        && this.isSubmit2
+        ? null : this.groupPasswordModal2Id
+    },
+    loadRecord (groupPassword) {
       const recordId = this.openedRecordId
       const groupId = this.modalGroup?._id
-      if (!groupId || !recordId || !value) {
+      if (!groupId || !recordId || !groupPassword) {
         return;
       }
       this.$axios.post('/api/record/open', {
         record_id: recordId,
         group: {
           _id: groupId,
-          password: value
+          password: groupPassword
         }
       })
         .then(res => {
@@ -173,16 +201,6 @@ export default {
 
       })
     },
-    isSubmit (value) {
-      if (value) {
-        return
-      }
-      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, null)
-      this.groupPassword = null
-      this.openedRecordId = null
-    }
-  },
-  methods: {
     groupItemId (recordId) {
       return this.groupId + recordId
     },
@@ -198,7 +216,7 @@ export default {
     passwordSubmit (groupPassword) {
       this.$axios.post('/api/group/verify', {
         group: {
-          _id: this.modalGroup.id,
+          _id: this.modalGroup._id,
           password: groupPassword
         }
       })

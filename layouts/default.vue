@@ -42,6 +42,9 @@ export default {
       return JSON.parse(atob(base64));
     },
     refresh ()  {
+      if (!this.$store.state.refresh_token) {
+        return
+      }
       const refreshToken =localStorage.getItem('refresh_token')
       const id = localStorage.getItem('email')
       if (refreshToken && id){

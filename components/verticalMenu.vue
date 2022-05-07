@@ -82,11 +82,24 @@ export default {
     },
     async loadRecords () {
       const group_id = this.dbGroupId
+
       this.$emit("select")
       if (!this.access_token) {
         return
       }
-
+      if (group_id) {
+        await this.loadRecordsForGroup(group_id);
+        return
+      }
+      this.$store.commit(GROUP_MUTATIONS.SET_RECORD_LIST, [])
+      this.groupList.forEach(group => {
+        this.addRecordsForGroup(group._id)
+      })
+    },
+    async loadRecordsForGroup (group_id) {
+      if (!group_id) {
+        return
+      }
       this.$axios.get('/api/record', {
         params: {
           group_id: group_id
@@ -102,6 +115,25 @@ export default {
           this.$emit("loaded")
         })
     },
+    async addRecordsForGroup (group_id) {
+      if (!group_id) {
+        return
+      }
+      this.$axios.get('/api/record', {
+        params: {
+          group_id: group_id
+        }
+      })
+        .then(({ data }) => {
+          console.log(`add records ${data.items}`)
+          this.$store.commit(GROUP_MUTATIONS.ADD_RECORD_LIST, data.items)
+        })
+        .catch((errorCode) => {
+        })
+        .then(() => {
+          this.$emit("loaded")
+        })
+    }
   }
 }
 </script>

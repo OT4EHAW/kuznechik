@@ -212,11 +212,7 @@ router.get('/record', (req, res) => {
   const {group_id}  = req.query
   console.log("group_id",group_id);
   if (!group_id) {
-    Record.find().sort({label: 0}).then(data => {
-        res.status(200).json({items: data})
-      }).catch(err => {
-      res.status(500).send("не удалось получить записи для указанной группы");
-    })
+    res.status(404).send("Группа на найдена");
     return;
   }
   Group.findById(group_id).then(data => {
@@ -332,6 +328,55 @@ router.post('/record/open', (req, res) => {
 })
 
 
+
+/* POST create new record for group*/
+router.post('/record/edit', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const { record, group } = req.body
+  Group.findById( group._id )
+    .then(data => {
+      if (!data) {
+        console.error("group",data);
+        res.status(404).send("группа не найдена");
+        return
+      }
+      console.log("group",data);
+      console.log("changes",record);
+      console.log("group password",group.password);
+      const gost_hash_512 = hashHelper.streebog_512(group.password)
+      if (gost_hash_512 !== data.gost_hash_512) {
+        res.status(406).send("неверный пароль для указанной группы");
+        return
+      }
+      try {
+        const login_encrypted = cipherHelper.kuznechikEncrypt(record.login, group.password)
+        const password_encrypted = cipherHelper.kuznechikEncrypt(record.password, group.password)
+
+        const encrypted_fields_str = `${record.login}${record.password}`
+        const encrypted_fields_gost_hash_512 =  hashHelper.streebog_512(encrypted_fields_str)
+
+        Record.findOneAndUpdate(
+          { _id: record._id },
+          { login_encrypted, password_encrypted, encrypted_fields_gost_hash_512 }
+        ).then(editedRecord => {
+            console.log("changed record",editedRecord);
+            res.status(200).json(editedRecord)
+          }).catch(error => {
+            console.error(error);
+            res.status(500).send(error)
+          })
+      } catch (error) {
+        console.error(error);
+        res.status(520).send("не удалось зашифровать поля");
+      }
+    }).catch(error=>{
+    console.error("error",error)
+    res.status(500).send(error)
+  })
+})
 
 
 
