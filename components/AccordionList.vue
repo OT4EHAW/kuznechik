@@ -87,6 +87,7 @@
             >
               <b-card-body>
                <record-form
+                 :label="item.label"
                  :id="item._id"
                  :login="login"
                  :password="password"

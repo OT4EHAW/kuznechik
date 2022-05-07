@@ -1,4 +1,10 @@
 <template>
+  <div>
+    <remove-record-modal
+      :id="'remove-record-modal'"
+      :record-id="id"
+      :record-name="label"
+    />
   <form>
 
     <b-form-row>
@@ -52,12 +58,20 @@
       <b-button id="rename-btn" block  variant="outline-primary" @click="handleRename">
          Переименовать
       </b-button>
-      <b-button id="remove-btn" block variant="outline-danger" @click="handleRemove">
+      <b-button
+        id="remove-btn"
+        block
+        variant="outline-danger"
+        @click="handleRemove"
+        v-b-modal.remove-record-modal
+      >
         Удалить
       </b-button>
+
     </b-form-row>
 
   </form>
+  </div>
 </template>
 
 <script>
@@ -65,10 +79,16 @@
 
 import {mapState} from "vuex";
 import {GROUP_MUTATIONS} from "../store";
+import RemoveRecordModal from "./RemoveRecorModal";
 
 export default {
   name: "RecordForm",
+  components: {RemoveRecordModal},
   props: {
+    label: {
+      type: String,
+      default: null
+    },
     id: {
       type: String,
       default: null

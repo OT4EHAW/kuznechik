@@ -378,7 +378,21 @@ router.post('/record/edit', (req, res) => {
   })
 })
 
-
+router.delete('/record/:id', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  console.warn("req.params ",req.params);
+  const { id } = req.params
+  console.warn("DELETE ",id);
+  Record.findByIdAndDelete(id)
+    .then(data => {
+      res.status(200).json(data)
+    }).catch(err => {
+    res.status(500).json(err)
+  })
+})
 
 
 /*/!* GET all *!/
