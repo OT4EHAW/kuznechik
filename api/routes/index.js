@@ -378,6 +378,27 @@ router.post('/record/edit', (req, res) => {
   })
 })
 
+/* POST create new record for group*/
+router.post('/record/rename', (req, res) => {
+  if (!checkUserToken(req.headers.authorization)) {
+    res.status(401).send("invalid token...");
+    return;
+  }
+  const { record } = req.body
+  console.log("changes",record);
+  Record.findOneAndUpdate(
+    { _id: record._id },
+    { label: record.label },
+    {new: true}
+    ).then(editedRecord => {
+      console.log("changed record",editedRecord);
+     res.status(200).json(editedRecord)
+   }).catch(error => {
+      console.error(error);
+     res.status(500).send(error)
+    })
+})
+
 router.delete('/record/:id', (req, res) => {
   if (!checkUserToken(req.headers.authorization)) {
     res.status(401).send("invalid token...");

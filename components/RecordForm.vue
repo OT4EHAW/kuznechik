@@ -1,5 +1,10 @@
 <template>
   <div>
+    <rename-record-modal
+      :id="'rename-record-modal'"
+      :record-id="id"
+      :record-name="label"
+    />
     <remove-record-modal
       :id="'remove-record-modal'"
       :record-id="id"
@@ -55,14 +60,18 @@
     </b-form-row>
 
     <b-form-row  class="mt-4"  v-else>
-      <b-button id="rename-btn" block  variant="outline-primary" @click="handleRename">
+      <b-button
+        id="rename-btn"
+        block
+        variant="outline-primary"
+        v-b-modal.rename-record-modal
+      >
          Переименовать
       </b-button>
       <b-button
         id="remove-btn"
         block
         variant="outline-danger"
-        @click="handleRemove"
         v-b-modal.remove-record-modal
       >
         Удалить
@@ -79,11 +88,12 @@
 
 import {mapState} from "vuex";
 import {GROUP_MUTATIONS} from "../store";
-import RemoveRecordModal from "./RemoveRecorModal";
+import RemoveRecordModal from "./RemoveRecordModal";
+import RenameRecordModal from "./RenameRecordModal";
 
 export default {
   name: "RecordForm",
-  components: {RemoveRecordModal},
+  components: {RenameRecordModal, RemoveRecordModal},
   props: {
     label: {
       type: String,
@@ -216,12 +226,6 @@ export default {
         this.$toast.error('Не удалось изменить запись')
       })
     },
-    handleRename () {
-
-    },
-    handleRemove () {
-
-    }
   },
 }
 </script>

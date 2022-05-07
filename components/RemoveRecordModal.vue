@@ -1,8 +1,9 @@
 <template>
-  <b-modal :id="id" title="BootstrapVue"
+  <b-modal :id="id"
            cancel-title="Отмена"
            ok-title="Удалить"
            @ok="handleRemoveClick"
+           :title="`Удаление записи`"
   >
     <p class="my-4">Вы действительно хотите удалить запись {{recordName}}?</p>
   </b-modal>

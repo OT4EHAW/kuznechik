@@ -19,7 +19,8 @@ export const GROUP_MUTATIONS = {
   NEED_UPDATE_GROUP_LIST: "NEED_UPDATE_GROUP_LIST",
   NEED_UPDATE_RECORD_LIST: "NEED_UPDATE_RECORD_LIST",
   SET_GROUP: "SET_GROUP",
-  NEED_UPDATE_RECORD: "NEED_UPDATE_RECORD"
+  NEED_UPDATE_RECORD: "NEED_UPDATE_RECORD",
+  RENAME_RECORD: "RENAME_RECORD"
 }
 
 
@@ -101,8 +102,16 @@ const createStore = () => {
         state.recordList = list.slice() || []
         state.needRecordListUpdate = false
       },
-      [GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST] (state) {
-        state.needGroupListUpdate = true
+      [GROUP_MUTATIONS.RENAME_RECORD] (state, record) {
+        state.recordList = state.recordList.map(item=>{
+          if (item._id !== record._id) {
+            return item
+          }
+          return {
+            ...item,
+            label: record.label
+          }
+        })
       },
       [GROUP_MUTATIONS.NEED_UPDATE_RECORD_LIST] (state) {
         state.needRecordListUpdate = true
