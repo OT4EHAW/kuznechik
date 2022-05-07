@@ -155,12 +155,8 @@ export default {
     passFeedbackString () {
       if (this.password.length === 0) {
         return null
-      } else if (this.password.length < 8 && /\d/.test(this.password)) {
-        this.passFeedback = 'В пароле должно быть не менее 8-и символов.'
-      } else if (!this.password.length < 8 && !/\d/.test(this.password)) {
-        this.passFeedback = 'В пароле должна быть хотябы одна цифра.'
       }
-      return this.password.length >= 8 && /\d/.test(this.password)
+      return true
     },
     handleOk(event) {
       // Prevent modal from closing
