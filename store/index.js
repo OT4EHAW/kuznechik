@@ -116,6 +116,9 @@ const createStore = () => {
       [GROUP_MUTATIONS.NEED_UPDATE_RECORD_LIST] (state) {
         state.needRecordListUpdate = true
       },
+      [GROUP_MUTATIONS.NEED_UPDATE_GROUP_LIST] (state) {
+        state.needGroupListUpdate = true
+      },
       [GROUP_MUTATIONS.NEED_UPDATE_RECORD] (state) {
         state.needRecordUpdate = true
       }
