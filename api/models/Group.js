@@ -4,7 +4,6 @@ const groupSchema = new mongoose.Schema({
     name: {
       type: String,
       required: true,
-      unique: true
     },
     gost_hash_512: {
       type: String,
@@ -12,6 +11,7 @@ const groupSchema = new mongoose.Schema({
     },
     user_id: {
       type: String,
+      required: true,
     },
   },
   {

@@ -2,7 +2,7 @@
   <b-container class=" m-0 mt-2 w-100">
       <b-row class="d-flex">
         <b-col  class="">
-          <vertical-menu @select="handleSelect"  @loaded="handleLoaded"/>
+          <vertical-menu @select="handleSelect" @loaded="handleLoaded"/>
         </b-col>
         <b-col class="flex-grow-1" >
          <accordion-list :isLoaded="isLoadedSelectedGroup"/>
@@ -31,6 +31,7 @@ export default {
       this.loadIGroups()
     },
     needGroupListUpdate () {
+
       this.loadIGroups()
     }
   },

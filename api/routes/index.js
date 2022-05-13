@@ -130,7 +130,13 @@ router.post('/group/new', (req, res) => {
     return;
   }
   const { name, password } = req.body
-  Group.find({ name })
+  const user_id = tokenHelper.getUser(req.headers.authorization)
+  if (!user_id) {
+    console.error("user_id",user_id);
+    res.status(401).send("пользователь не определен");
+    return
+  }
+  Group.find({ name, user_id  })
     .then(data => {
       console.log("data",data.length);
       if (data.length !== 0) {
@@ -145,12 +151,7 @@ router.post('/group/new', (req, res) => {
         res.status(500).send("ошибка обработки пароля");
         return
       }
-      const user_id = tokenHelper.getUser(req.headers.authorization)
-      if (!user_id) {
-        console.error("user_id",user_id);
-        res.status(401).send("пользователь не определен");
-        return
-      }
+
       console.warn(" new Group", name);
       new Group({
         name,
