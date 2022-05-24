@@ -1,11 +1,14 @@
 <template>
   <b-container class=" m-0 mt-2 w-100">
-      <b-row class="d-flex">
-        <b-col  class="">
+      <b-row>
+        <b-col>
           <vertical-menu @select="handleSelect" @loaded="handleLoaded"/>
         </b-col>
-        <b-col class="flex-grow-1" >
+        <b-col>
          <accordion-list :isLoaded="isLoadedSelectedGroup"/>
+        </b-col>
+        <b-col>
+
         </b-col>
 <!--        <b-col class="w-25 flex-grow-0">
           Добавить запись

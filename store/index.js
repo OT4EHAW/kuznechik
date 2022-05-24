@@ -89,6 +89,7 @@ const createStore = () => {
 
       [GROUP_MUTATIONS.SET_RECORD_ID] (state, id) {
         state.recordId = id
+        state.needRecordUpdate = false
       },
       [GROUP_MUTATIONS.SET_GROUP_LIST] (state, list) {
         state.groupList = list.slice() || []

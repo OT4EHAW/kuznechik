@@ -195,9 +195,10 @@ export default {
         .then(res => {
           this.login = res.data.login
           this.password = res.data.password
+          this.$store.commit(GROUP_MUTATIONS.SET_RECORD_ID, res.data._id)
+
           this.isSubmit2 = true
           this.$root.$emit('bv::show::collapse', this.groupItemId(this.openedRecordId))
-
         }).catch(() => {
 
       })
@@ -240,7 +241,7 @@ export default {
       isSubmit2: false,
       groupPassword: null,
       openedRecordId: null,
-      login:null,
+      login: null,
       password: null
     }
   },

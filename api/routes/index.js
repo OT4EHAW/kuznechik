@@ -315,6 +315,7 @@ router.post('/record/open', (req, res) => {
         return
       }
       res.status(200).json({
+        _id: record_id,
         group_id: data.group_id,
         label: data.label,
         login: login_decrypted,
@@ -364,7 +365,7 @@ router.post('/record/edit', (req, res) => {
           { login_encrypted, password_encrypted, encrypted_fields_gost_hash_512 }
         ).then(editedRecord => {
             console.log("changed record",editedRecord);
-            res.status(200).json(editedRecord)
+            res.status(200).json({...editedRecord, _id: record._id})
           }).catch(error => {
             console.error(error);
             res.status(500).send(error)
