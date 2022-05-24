@@ -26,8 +26,10 @@ const decodedBase64urlFromJSON = (base64url) => {
 const createKey = () => {
   return uuid.v4()
 }
+
 let SECRET_KEY = createKey();
 const ALG_NAME = "HMAC_GOSTR3411_2012_256"
+
 const tokenHelper = {
   algName: ALG_NAME,
   createAccess: (userId, time) => {

@@ -9,7 +9,6 @@ const buildCryptoHelper = (keyStr) => {
   const keyArray = hashHelper.streebog_256_array(keyStr)
   cryptoHelper.kuz.GetKeys(Buffer.from(keyArray))
   return  cryptoHelper
-
 }
 export const cipherHelper = {
   name: "CTR",

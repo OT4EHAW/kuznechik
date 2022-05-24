@@ -1,5 +1,5 @@
 <template>
-  <div class="d-block h-100 overflow-hidden" >
+  <div class="d-block h-100" >
     <navbar></navbar>
      <nuxt/>
   </div>
